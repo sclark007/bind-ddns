@@ -20,6 +20,7 @@
 # - nodes generation from suites definition
 #   <% require "#{File.dirname(__FILE__)}/test/kitchen_sandbox.rb" %>
 # - improve login and destroy with docker driver (depend on systemd)
+#   install pipework and create a second interface
 #   <% require "#{File.dirname(__FILE__)}/test/kitchen_docker.rb" %>
 
 driver:
@@ -48,6 +49,9 @@ platforms:
           thor busser busser-serverspec serverspec bundler &&
           chown -R kitchen:kitchen /tmp/verifier
         - yum install -y net-tools patch make automake autoconf gcc
+      pipework: true
+      pipework_iface: br1
+      pipework_ip: 0/0
 
 suites:
   # Install a ddns server
