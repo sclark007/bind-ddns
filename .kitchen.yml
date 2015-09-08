@@ -61,7 +61,7 @@ suites:
       instance_name: server-ddns
     run_list:
       - recipe[ddnsupdate::install]
-      - recipe[ddns-wrapper]
+      - recipe[bind-ddns]
     attributes:
       bind:
         zonetype: master
