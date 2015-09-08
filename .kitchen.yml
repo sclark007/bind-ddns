@@ -59,3 +59,15 @@ suites:
     driver:
       hostname: server-ddns.kitchen
       instance_name: server-ddns
+    run_list:
+      - recipe[ddnsupdate::install]
+    attributes:
+      bind:
+        zonetype: master
+        zones:
+          attribute:
+            - local.kitchen
+      ddnsupdate:
+        ddnssec:
+          name: kitchen
+          secret: 9ZDQZxLEBuho4+O0EuGOYA==
