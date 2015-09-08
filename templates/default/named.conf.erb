@@ -1,0 +1,36 @@
+// Produced by Chef -- changes will be overwritten
+
+options {
+  <% @options.each do |key, value| %>
+  <%= key %> <%= value %>;
+  <% end %>
+};
+
+logging {
+  <% @channels.each do |channel| %>
+  channel <%= channel['name'] %> {
+    <% channel['config'].each do |key, value| %>
+    <%= key %> <%= value %>;
+    <% end %>
+  };
+  <% end %>
+  <% @categories.each do |category| %>
+    category <% category['name'] %> {
+    <% category['channels'].each do |channel| %>
+    <%= channel %>;
+    <% end %>
+  };
+  <% end %>
+};
+
+<% @zones.uniq.each do |zone| %>
+zone <%= zone['name'] %> {
+  <% zone['config'].each do |key, value| %>
+  <%= key %> <%= value %>;
+  <% end %>
+};
+<% end %>
+
+<% @included_files.each do |file| %>
+include "<%= "#{@config_dir}/#{file}" %>";
+<% end -%>
