@@ -63,11 +63,17 @@ suites:
       - recipe[ddnsupdate::install]
       - recipe[bind-ddns]
     attributes:
-      bind:
-        zonetype: master
+      bind-ddns:
+        options:
+          recursion: 'no'
         zones:
-          attribute:
-            - local.kitchen
+          - name: kitchen
+            config:
+              type: master
+              file: '"master/db-kitchen"'
+              allow-update: '{ key kitchen; }'
+        included_files:
+          - nsupdate.key
       ddnsupdate:
         ddnssec:
           name: kitchen

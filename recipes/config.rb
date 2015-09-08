@@ -19,7 +19,8 @@ conf_vars = {
   'channels' => node['bind-ddns']['channels'],
   'categories' => node['bind-ddns']['categories'],
   'zones' => node['bind-ddns']['zones'],
-  'included_files' => node['bind-ddns']['included_files'],
+  'included_files' => node['bind-ddns']['default_files'].dup +
+    node['bind-ddns']['included_files'],
   'config_dir' => node['bind-ddns']['config_dir']
 }
 

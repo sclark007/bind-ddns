@@ -57,7 +57,9 @@ default['bind-ddns']['zones'] = [
   }
 ]
 
-default['bind-ddns']['included_files'] = [
+default['bind-ddns']['default_files'] = [
   'named.rfc1912.zones',
   'named.root.key'
 ]
+
+default['bind-ddns']['included_files'] = []
