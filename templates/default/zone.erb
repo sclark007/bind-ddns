@@ -1,0 +1,20 @@
+$TTL <%= @global_ttl %>
+@ IN SOA <%= @ns.first %> <%= @contact %> (
+  <%%= @serial %> ; Serial [unix time]
+  <%= @refresh %> ; Refresh
+  <%= @retry %> ; Retry
+  <%= @expire %> ; Expire
+  <%= @negcachettl %> ; Negative Cache TTL
+)
+
+<% @ns.each do |server| %>
+  IN NS <%= server %>
+<% end %>
+
+<% @a.each do |key,value| %>
+<%= key %> IN A <%= value %>
+<% end %>
+
+<% @extra_records.each do |record| %>
+<%= record %>
+<% end %>

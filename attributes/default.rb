@@ -15,7 +15,11 @@
 #
 
 default['bind-ddns']['package'] = 'bind'
+default['bind-ddns']['package-utils'] = 'bind-utils'
+
+default['bind-ddns']['user'] = 'named'
 default['bind-ddns']['config_dir'] = '/etc'
+default['bind-ddns']['var_dir'] = '/var/named'
 
 default['bind-ddns']['options'] = {
   'listen-on port' => '53 { 127.0.0.1; }',
@@ -34,6 +38,15 @@ default['bind-ddns']['options'] = {
   'pid-file' => '"/run/named/named.pid"',
   'session-keyfile' => '"/run/named/session.key"'
 }
+
+default['bind-ddns']['keys'] = []
+# Example of a key definition, algorithm is optional
+# {
+#   'name' => 'keyname',
+#   algorithm => 'HMAC-MD5'
+#   secret => 'XXXX'
+# }
+default['bind-ddns']['default_key_algorithm'] = 'HMAC-MD5'
 
 default['bind-ddns']['channels'] = [
   {
@@ -55,6 +68,22 @@ default['bind-ddns']['zones'] = [
       'file' => '"named.ca"'
     }
   }
+  # Example with a user-defined zone
+  # {
+  #   'name' => 'myzone',
+  #   'config' => {
+  #     'type' => 'master',
+  #     'file' => '"master/myzone"'
+  #   },
+  #   global_ttl => 1d,
+  #   contact => "foo@myzone",
+  #   ns => [],
+  #   refresh => 3h,
+  #   retry => 30m,
+  #   expire => 4w,
+  #   negcachettl => 1h,
+  #   extra_records => []
+  # }
 ]
 
 default['bind-ddns']['default_files'] = [
