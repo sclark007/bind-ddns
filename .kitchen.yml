@@ -61,7 +61,7 @@ suites:
       instance_name: server-ddns
     run_list:
       #      - recipe[ddnsupdate::install]
-      - recipe[bind-ddns]
+      - recipe[bind-ddns::server]
     attributes:
       bind-ddns:
         options:

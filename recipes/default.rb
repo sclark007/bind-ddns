@@ -14,7 +14,5 @@
 # limitations under the License.
 #
 
-# Run other recipes in order to install and configure everything
-include_recipe "#{cookbook_name}::package"
-include_recipe "#{cookbook_name}::config"
-include_recipe "#{cookbook_name}::service"
+# By default, you probably want to be only a client
+include_recipe "#{cookbook_name}::client"

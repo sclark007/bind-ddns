@@ -14,5 +14,4 @@
 # limitations under the License.
 #
 
-# Install bind package
-package node['bind-ddns']['package']
+include_recipe "#{cookbook_name}::package-client"

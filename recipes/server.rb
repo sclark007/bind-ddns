@@ -14,5 +14,8 @@
 # limitations under the License.
 #
 
-# Install bind package
-package node['bind-ddns']['package']
+# Run other recipes in order to install and configure everything
+include_recipe "#{cookbook_name}::client"
+include_recipe "#{cookbook_name}::package"
+include_recipe "#{cookbook_name}::config"
+include_recipe "#{cookbook_name}::service"

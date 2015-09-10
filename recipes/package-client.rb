@@ -14,5 +14,7 @@
 # limitations under the License.
 #
 
-# Install bind package
-package node['bind-ddns']['package']
+# Install bind-utils if necessary
+unless node['bind-ddns']['package-utils'].empty?
+  package node['bind-ddns']['package-utils']
+end
