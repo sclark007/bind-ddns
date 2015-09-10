@@ -53,8 +53,12 @@ end
 node['bind-ddns']['zones'].each do |zone|
 
   filename = zone['config']['file'].gsub(/\'|\"/, '')
+  filepath = File.join(node['bind-ddns']['var_dir'], filename)
   raise "No nameserver defined for zone #{zone['name']}" if zone['ns'].empty?
 
+  z_exists = File.exist?('/etc/rndc.key') &&  File.exist?(filepath)
+
+  # Freeze and reload the zone if it exists (condition in notifies)
   execute "freeze #{zone['name']}" do
     command "rndc freeze #{zone['name']}"
     action :nothing
@@ -65,9 +69,10 @@ node['bind-ddns']['zones'].each do |zone|
     action :nothing
   end
 
+  # Change the serial only if the rest has changed
   template filename do
-    path File.join(node['bind-ddns']['var_dir'], filename)
-    source File.join(node['bind-ddns']['var_dir'], "#{filename}.erb")
+    path filepath
+    source "#{filepath}.erb"
     local true
     owner node['bind-ddns']['user']
     group node['bind-ddns']['user']
@@ -77,7 +82,8 @@ node['bind-ddns']['zones'].each do |zone|
     #notifies :restart, "service[bind9]"
   end
 
-  template File.join(node['bind-ddns']['var_dir'], "#{filename}.erb") do
+  # Create a template with everything except the serial
+  template "#{filepath}.erb" do
     source 'zone.erb'
     owner node['bind-ddns']['user']
     group node['bind-ddns']['user']
@@ -93,9 +99,9 @@ node['bind-ddns']['zones'].each do |zone|
       'negcachettl' => zone['negcachettl'],
       'extra_records' => zone['extra_records']
     })
-    notifies :run, "execute[freeze #{zone['name']}]", :immediately
+    notifies :run, "execute[freeze #{zone['name']}]", :immediately if z_exists
     notifies :create, "template[#{filename}]", :immediately
-    notifies :run, "execute[restart #{zone['name']}]", :immediately
+    notifies :run, "execute[restart #{zone['name']}]", :immediately if z_exists
   end unless zone['name'] == '"." IN'
 
 end
