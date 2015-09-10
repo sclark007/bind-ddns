@@ -19,5 +19,5 @@ service 'named' do
   service_name node['bind-ddns']['service_name']
   supports :status => true, :restart => true, :reload => true
   action [ :enable, :start ]
-  #subscribes :reload, config_files
+  subscribes :restart, 'execute[named-checkconf]'
 end

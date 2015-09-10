@@ -29,13 +29,16 @@ node['bind-ddns']['keys'].each do |key|
     group node['bind-ddns']['user']
     mode 0644
     variables 'key' => key
+    notifies :run, 'execute[named-checkconf]', :delayed
   end
 
   key_files << filename
 end
 
 # Write named configuration
-template File.join(node['bind-ddns']['config_dir'], 'named.conf') do
+named_conf = File.join(node['bind-ddns']['config_dir'], 'named.conf')
+
+template named_conf do
   source 'named.conf.erb'
   mode '644'
   variables({
@@ -47,6 +50,7 @@ template File.join(node['bind-ddns']['config_dir'], 'named.conf') do
       node['bind-ddns']['included_files'] + key_files,
     'config_dir' => node['bind-ddns']['config_dir']
   })
+  notifies :run, 'execute[named-checkconf]', :delayed
 end
 
 # Write zone files
@@ -102,6 +106,13 @@ node['bind-ddns']['zones'].each do |zone|
     notifies :run, "execute[freeze #{zone['name']}]", :immediately if z_exists
     notifies :create, "template[#{filename}]", :immediately
     notifies :run, "execute[restart #{zone['name']}]", :immediately if z_exists
+    notifies :run, 'execute[named-checkconf]', :delayed
   end unless zone['name'] == '"." IN'
 
+end
+
+# Check if the configuration is OK
+execute 'named-checkconf' do
+  command "/usr/sbin/named-checkconf -z #{named_conf}"
+  action :nothing
 end
