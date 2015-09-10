@@ -20,6 +20,7 @@ default['bind-ddns']['package-utils'] = 'bind-utils'
 default['bind-ddns']['user'] = 'named'
 default['bind-ddns']['config_dir'] = '/etc'
 default['bind-ddns']['var_dir'] = '/var/named'
+default['bind-ddns']['service_name'] = 'named'
 
 default['bind-ddns']['options'] = {
   'listen-on port' => '53 { 127.0.0.1; }',
@@ -83,6 +84,8 @@ default['bind-ddns']['zones'] = [
   #   expire => 4w,
   #   negcachettl => 1h,
   #   extra_records => []
+  #   serial => 123 # set it ONLY if you want to force the serial
+  #     # by default (ie if nil), it uses the current unix time
   # }
 ]
 

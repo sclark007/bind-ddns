@@ -19,7 +19,6 @@ key_files = []
 
 # Write key files
 node['bind-ddns']['keys'].each do |key|
-  p key
   key = key.dup
   key['algorithm'] ||= node['bind-ddns']['default_key_algorithm']
   filename = "named-#{key['name']}.key"
@@ -56,6 +55,16 @@ node['bind-ddns']['zones'].each do |zone|
   filename = zone['config']['file'].gsub(/\'|\"/, '')
   raise "No nameserver defined for zone #{zone['name']}" if zone['ns'].empty?
 
+  execute "freeze #{zone['name']}" do
+    command "rndc freeze #{zone['name']}"
+    action :nothing
+  end
+
+  execute "restart #{zone['name']}" do
+    command "rndc reload #{zone['name']} && rndc thaw #{zone['name']}"
+    action :nothing
+  end
+
   template filename do
     path File.join(node['bind-ddns']['var_dir'], filename)
     source File.join(node['bind-ddns']['var_dir'], "#{filename}.erb")
@@ -63,7 +72,7 @@ node['bind-ddns']['zones'].each do |zone|
     owner node['bind-ddns']['user']
     group node['bind-ddns']['user']
     mode 0644
-    variables :serial => Time.now.to_i
+    variables :serial => zone['serial'] || Time.now.to_i
     action :nothing
     #notifies :restart, "service[bind9]"
   end
@@ -84,7 +93,9 @@ node['bind-ddns']['zones'].each do |zone|
       'negcachettl' => zone['negcachettl'],
       'extra_records' => zone['extra_records']
     })
+    notifies :run, "execute[freeze #{zone['name']}]", :immediately
     notifies :create, "template[#{filename}]", :immediately
+    notifies :run, "execute[restart #{zone['name']}]", :immediately
   end unless zone['name'] == '"." IN'
 
 end

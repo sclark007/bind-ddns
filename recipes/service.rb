@@ -13,3 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+# Enable/Start service
+service 'named' do
+  service_name node['bind-ddns']['service_name']
+  supports :status => true, :restart => true, :reload => true
+  action [ :enable, :start ]
+  #subscribes :reload, config_files
+end
