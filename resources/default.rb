@@ -18,6 +18,8 @@ actions :add, :delete
 default_action :add
 
 attributes = [
+  [ :uniq, :kind_of => [TrueClass, FalseClass], :default => true ],
+
   [ :server, :kind_of => String, :default => nil, :required => true ],
   [ :zone, :kind_of => String, :default => nil, :required => true ],
   [ :keyname, :kind_of => String, :default => nil, :required => true ],
@@ -37,5 +39,3 @@ attributes = [
 attributes.each do |attr|
   attribute *attr
 end
-
-attribute :attributes, :kind_of => Array, :default => attributes
