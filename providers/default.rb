@@ -60,10 +60,11 @@ end
 
 def nsupdate(opt,server,key,zone,action,domain,ttl,dnsclass,type,data,other)
   cmd = "nsupdate #{opt}"
+  zone = "zone #{zone}" unless zone.nil?
   config = <<-EOS.gsub /^ *$\n/, ''
     server #{server}
     key #{key['hmac']} #{key['keyname']} #{key['secret']}
-    zone #{zone}
+    #{zone}
     #{other}
     update #{action} #{domain} #{ttl} #{dnsclass} #{type} #{data}
     send

@@ -21,7 +21,7 @@ attributes = [
   [ :uniq, :kind_of => [TrueClass, FalseClass], :default => true ],
 
   [ :server, :kind_of => String, :default => nil, :required => true ],
-  [ :zone, :kind_of => String, :default => nil, :required => true ],
+  [ :zone, :kind_of => String, :default => nil ],
   [ :keyname, :kind_of => String, :default => nil, :required => true ],
   [ :secret, :kind_of => String, :default => nil, :required => true ],
   [ :hmac, :kind_of => String, :default => nil ],
