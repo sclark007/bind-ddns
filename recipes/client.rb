@@ -14,4 +14,6 @@
 # limitations under the License.
 #
 
+# Install necessary package then apply records
 include_recipe "#{cookbook_name}::package-client"
+include_recipe "#{cookbook_name}::nsupdate"
