@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+# Load our library
+::Chef::Provider.send(:include, BindDdns)
+
 use_inline_resources
 
 action :add do
@@ -59,7 +62,7 @@ def check_current(domain, ip, server)
 end
 
 def nsupdate(opt,server,key,zone,action,domain,ttl,dnsclass,type,data,other)
-  data = resolve_if data
+  data = resolve_iface data
   cmd = "nsupdate #{opt}"
   zone = "zone #{zone}" unless zone.nil?
   config = <<-EOS.gsub /^ *$\n/, ''
@@ -73,21 +76,4 @@ def nsupdate(opt,server,key,zone,action,domain,ttl,dnsclass,type,data,other)
   execute "cat <<-EOF | #{cmd}
     #{config}EOF
   "
-end
-
-def resolve_if(data)
-  result = data
-  # data may be an interface name, in the case we resolve its inet address
-  if node['network']['interfaces'].keys.include? data
-    addresses =  node['network']['interfaces'][data]['addresses']
-    inet = addresses.map do |address, info|
-      address if info['family'] == 'inet'
-    end.compact
-
-    raise "No or more than one inet address for #{data}" unless inet.size == 1
-    result = inet.first
-  end
-  puts "################################"
-  puts result
-  result
 end
