@@ -14,6 +14,9 @@
 # limitations under the License.
 #
 
+# Load our library
+::Chef::Recipe.send(:include, BindDdns)
+
 # Keep track of any key files
 key_files = []
 
@@ -83,8 +86,10 @@ node['bind-ddns']['zones'].each do |zone|
     mode 0644
     variables :serial => zone['serial'] || Time.now.to_i
     action :nothing
-    #notifies :restart, "service[bind9]"
   end
+
+  # Interpret interface name to replace them with their inet address
+  resolved_zone_a = hash_resolve_iface(zone['a'])
 
   # Create a template with everything except the serial
   template "#{filepath}.erb" do
@@ -96,7 +101,7 @@ node['bind-ddns']['zones'].each do |zone|
       'global_ttl' => zone['global_ttl'],
       'contact' => zone['contact'],
       'ns' => zone['ns'],
-      'a' => zone['a'],
+      'a' => resolved_zone_a,
       'refresh' => zone['refresh'],
       'retry' => zone['retry'],
       'expire' => zone['expire'],

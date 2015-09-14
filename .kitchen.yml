@@ -72,7 +72,7 @@ suites:
             contact: "root@kitchen."
             ns: [ ns.kitchen. ]
             a:
-              ns.kitchen.: '10.0.1.1'
+              ns.kitchen.: eth0
             refresh: 3h
             retry: 30m
             expire: 4w

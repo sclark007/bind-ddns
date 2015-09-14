@@ -16,6 +16,14 @@
 
 module BindDdns
 
+  def hash_resolve_iface(hash)
+    result = {}
+    hash.each do |key, value|
+      result[resolve_iface(key)] = resolve_iface(value)
+    end
+    result
+  end
+
   # iface may be an interface name, in the case we resolve its inet address
   def resolve_iface(iface)
     result = iface # if iface is not an interface, we do nothing
