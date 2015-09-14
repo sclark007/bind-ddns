@@ -49,6 +49,9 @@ default['bind-ddns']['keys'] = []
 # }
 default['bind-ddns']['default_key_algorithm'] = 'HMAC-MD5'
 
+# records declared to the server through nsupdate
+default['bind-ddns']['records'] = []
+
 default['bind-ddns']['channels'] = [
   {
     'name' => 'default_debug',
