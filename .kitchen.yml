@@ -87,4 +87,4 @@ suites:
         records:
           - domain: test.kitchen
             server: localhost
-            data: 10.0.1.18
+            data: eth0
