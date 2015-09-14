@@ -33,7 +33,7 @@ module Kitchen
 
         # Extract dnsdock instance(s) to be able to launch it first
         # so it is ready for other containers
-        dnsdocks = instances.select {|i| i.suite.name.include? "dnsdock" }
+        dnsdocks = instances.select {|i| i.suite.name.include? "server" }
         services = instances - dnsdocks
 
         case action
