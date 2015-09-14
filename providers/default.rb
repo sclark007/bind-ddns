@@ -22,7 +22,8 @@ use_inline_resources
 action :add do
   nr = new_resource
   key = { 'hmac' => nr.hmac, 'keyname' => nr.keyname, 'secret' => nr.secret }
-  current = check_current(nr.domain, nr.data, nr.server)
+  data = resolve_iface nr.data
+  current = check_current(nr.domain, data, nr.server)
 
   if nr.uniq
     expected = 0
@@ -36,7 +37,7 @@ action :add do
 
   unless current['present']
     nsupdate(nr.cli_options, nr.server, key, nr.zone, 'add', nr.domain, nr.ttl,
-             nr.dnsclass, nr.type, nr.data, nr.other)
+             nr.dnsclass, nr.type, data, nr.other)
     nr.updated_by_last_action(true)
   end
 end
@@ -44,9 +45,10 @@ end
 action :delete do
   nr = new_resource
   key = { 'hmac' => nr.hmac, 'keyname' => nr.keyname, 'secret' => nr.secret }
-  current = check_current(nr.domain, nr.data, nr.server)
+  data = resolve_iface nr.data
+  current = check_current(nr.domain, data, nr.server)
 
-  data = nr.uniq ? nil : nr.data
+  data = nr.uniq ? nil : data
 
   if current['present'] || (nr.uniq && current['total'] > 0)
     nsupdate(nr.cli_options, nr.server, key, nr.zone, 'del', nr.domain, nil,
@@ -56,7 +58,7 @@ action :delete do
 end
 
 def check_current(domain, ip, server)
-  resolver = Resolv::DNS.new('nameserver' => server)
+  resolver = Resolv::DNS.new(:nameserver => server)
   addresses = resolver.getaddresses(domain).map(&:to_s)
   { 'total' => addresses.size, 'present' => addresses.include?(ip) }
 end
