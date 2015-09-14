@@ -23,8 +23,8 @@ default['bind-ddns']['var_dir'] = '/var/named'
 default['bind-ddns']['service_name'] = 'named'
 
 default['bind-ddns']['options'] = {
-  'listen-on port' => '53 { 127.0.0.1; }',
-  'listen-on-v6 port' => '53 { ::1; }',
+  'listen-on' => 'port 53 { 127.0.0.1; }',
+  'listen-on-v6' => 'port 53 { ::1; }',
   'directory' => '"/var/named"',
   'dump-file' => '"/var/named/data/cache_dump.db"',
   'statistics-file' => '"/var/named/data/named_stats.txt"',
