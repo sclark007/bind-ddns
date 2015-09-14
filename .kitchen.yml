@@ -22,6 +22,8 @@
 # - improve login and destroy with docker driver (depend on systemd)
 #   install pipework and create a second interface
 #   <% require "#{File.dirname(__FILE__)}/test/kitchen_docker.rb" %>
+# - Alias to have shorter lines
+#   <% ip_of = "docker inspect --format '{{.NetworkSettings.IPAddress}}'" %>
 
 driver:
   name: docker
@@ -61,7 +63,8 @@ suites:
     attributes:
       bind-ddns:
         options:
-          recursion: 'yes'
+          listen-on: "port 53 { localnets; }"
+          allow-query: "{ localnets; }"
         zones:
           - name: kitchen
             config:
@@ -82,6 +85,23 @@ suites:
           - name: kitchen
             secret: 9ZDQZxLEBuho4+O0EuGOYA==
         records:
-          - domain: test.kitchen
+          - domain: server-ddns.kitchen
             server: localhost
+            data: eth0
+
+  - name: client
+    driver:
+      hostname: client-ddns.kitchen
+      instance_name: client-ddns
+      dns: $(<%= ip_of %> server-ddns)
+    run_list:
+      - recipe[bind-ddns::client]
+    attributes:
+      bind-ddns:
+        keys:
+          - name: kitchen
+            secret: 9ZDQZxLEBuho4+O0EuGOYA==
+        records:
+          - domain: client-ddns.kitchen
+            server: ns.kitchen
             data: eth0
