@@ -49,9 +49,6 @@ platforms:
           thor busser busser-serverspec serverspec bundler &&
           chown -R kitchen:kitchen /tmp/verifier
         - yum install -y net-tools patch make automake autoconf gcc
-      pipework: true
-      pipework_iface: br1
-      pipework_ip: 0/0
 
 suites:
   # Install a ddns server
