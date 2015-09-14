@@ -64,7 +64,7 @@ node['bind-ddns']['zones'].each do |zone|
 
   # Freeze and reload the zone if it exists (condition in notifies)
   execute "freeze #{zone['name']}" do
-    command "rndc freeze #{zone['name']}"
+    command "rndc freeze #{zone['name']} | true"
     action :nothing
   end
 
