@@ -31,6 +31,8 @@ driver:
 
 provisioner:
   name: chef_zero
+  client_rb:
+    file_atomic_update: false
 
 platforms:
   - name: centos-7
@@ -62,6 +64,9 @@ suites:
       - recipe[bind-ddns::server]
     attributes:
       bind-ddns:
+        set_resolv_conf: true
+        server: ns.kitchen
+        search: kitchen
         options:
           listen-on: "port 53 { localnets; }"
           allow-query: "{ localnets; }"
@@ -98,6 +103,7 @@ suites:
       - recipe[bind-ddns::client]
     attributes:
       bind-ddns:
+        server: ns.kitchen
         keys:
           - name: kitchen
             secret: 9ZDQZxLEBuho4+O0EuGOYA==

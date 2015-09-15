@@ -14,9 +14,16 @@
 # limitations under the License.
 #
 
-# Install necessary package then apply records
-include_recipe "#{cookbook_name}::package-client"
-if node['bind-ddns']['set_resolv_conf']
-  include_recipe "#{cookbook_name}::resolvconf"
+server = node['bind-ddns']['server']
+
+# If server is a name, we assume it is localhost or an alias
+server_addr = !!(server =~ Resolv::IPv4::Regex) ? server : '127.0.0.1'
+
+template '/etc/resolv.conf' do
+  source 'resolv.conf.erb'
+  mode '0644'
+  variables({
+    'nameservers' => [ server_addr ],
+    'search' => node['bind-ddns']['search']
+  })
 end
-include_recipe "#{cookbook_name}::nsupdate"

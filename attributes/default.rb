@@ -22,6 +22,11 @@ default['bind-ddns']['config_dir'] = '/etc'
 default['bind-ddns']['var_dir'] = '/var/named'
 default['bind-ddns']['service_name'] = 'named'
 
+default['bind-ddns']['set_resolv_conf'] = false
+
+default['bind-ddns']['server'] = 'localhost'
+default['bind-ddns']['search'] = nil
+
 default['bind-ddns']['options'] = {
   'listen-on' => 'port 53 { 127.0.0.1; }',
   'listen-on-v6' => 'port 53 { ::1; }',

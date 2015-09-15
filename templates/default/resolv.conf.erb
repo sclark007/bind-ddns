@@ -1,0 +1,8 @@
+# Produced by Chef -- changes will be overwritten
+
+<% unless @search.nil? -%>
+search <%= @search %>
+<% end -%>
+<% @nameservers.each do |nameserver| -%>
+nameserver <%= nameserver %>
+<% end %>
