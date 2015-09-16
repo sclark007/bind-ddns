@@ -38,7 +38,7 @@ records.each do |record|
   end
 
   record.each do |name, value|
-    resource.send("#{name}", value)
+    resource.send(name, value)
   end
 
   action = record['action']
