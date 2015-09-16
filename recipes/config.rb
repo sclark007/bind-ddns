@@ -26,7 +26,7 @@ node['bind-ddns']['keys'].each do |key|
   key['algorithm'] ||= node['bind-ddns']['default_key_algorithm']
   filename = "named-#{key['name']}.key"
 
-  template File.join(node['bind-ddns']['config_dir'], filename) do
+  template ::File.join(node['bind-ddns']['config_dir'], filename) do
     source 'key.erb'
     owner node['bind-ddns']['user']
     group node['bind-ddns']['user']
@@ -39,7 +39,7 @@ node['bind-ddns']['keys'].each do |key|
 end
 
 # Write named configuration
-named_conf = File.join(node['bind-ddns']['config_dir'], 'named.conf')
+named_conf = ::File.join(node['bind-ddns']['config_dir'], 'named.conf')
 
 template named_conf do
   source 'named.conf.erb'
@@ -60,10 +60,10 @@ end
 node['bind-ddns']['zones'].each do |zone|
 
   filename = zone['config']['file'].gsub(/\'|\"/, '')
-  filepath = File.join(node['bind-ddns']['var_dir'], filename)
+  filepath = ::File.join(node['bind-ddns']['var_dir'], filename)
   raise "No nameserver defined for zone #{zone['name']}" if zone['ns'].empty?
 
-  z_exists = File.exist?('/etc/rndc.key') &&  File.exist?(filepath)
+  z_exists = ::File.exist?('/etc/rndc.key') && ::File.exist?(filepath)
 
   # Freeze and reload the zone if it exists (condition in notifies)
   execute "freeze #{zone['name']}" do
