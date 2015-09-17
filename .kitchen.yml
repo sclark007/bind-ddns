@@ -74,8 +74,8 @@ suites:
           - name: kitchen
             config:
               type: master
-              file: '"dynamic/db-kitchen"'
-              allow-update: '{ key kitchen; }'
+              file: dynamic/db-kitchen
+              allow-update: "{ key kitchen; }"
             ns: [ ns.kitchen. ]
             a:
               ns.kitchen.: eth0

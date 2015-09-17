@@ -26,7 +26,11 @@ logging {
 <% @zones.uniq.each do |zone| %>
 zone <%= zone['name'] %> {
   <% zone['config'].each do |key, value| %>
+  <% if key == 'file' %>
+  <%= key %> <%= "\"#{value}\"" %>;
+  <% else %>
   <%= key %> <%= value %>;
+  <% end %>
   <% end %>
 };
 <% end %>

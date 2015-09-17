@@ -93,7 +93,7 @@ default['bind-ddns']['zones'] = [
     'name' => '"." IN',
     'config' => {
       'type' => 'hint',
-      'file' => '"named.ca"'
+      'file' => 'named.ca'
     }
   }
   # Example with a user-defined zone
