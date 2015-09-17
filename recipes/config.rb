@@ -59,6 +59,24 @@ end
 # Write zone files
 node['bind-ddns']['zones'].each do |zone|
 
+  # Check configuration completeness
+  prefix = "#{cookbook_name}::#{recipe_name}: zone #{zone['name']}:"
+
+  [ 'name', 'config', 'ns', 'a' ].each do |field|
+    raise "#{prefix} mandatory field '#{field}' is nil" if zone[field].nil?
+  end
+  [ 'type', 'file' ].each do |field|
+    if zone['config'][field].nil?
+      raise "#{prefix} mandatory field 'config/#{field}' is nil"
+    end
+  end
+
+  # NS entries must have a match in A records
+  unless zone['ns'].map { |ns| zone['a'].keys.include? ns }.all?
+    raise "#{prefix} some nameservers defined in 'ns' does not " +
+      "have a corresponding A entry"
+  end
+
   filename = zone['config']['file'].gsub(/\'|\"/, '')
   filepath = ::File.join(node['bind-ddns']['var_dir'], filename)
   raise "No nameserver defined for zone #{zone['name']}" if zone['ns'].empty?
@@ -91,6 +109,8 @@ node['bind-ddns']['zones'].each do |zone|
   # Interpret interface name to replace them with their inet address
   resolved_zone_a = hash_resolve_iface(zone['a'])
 
+  default = node['bind-ddns']['zones_default']
+
   # Create a template with everything except the serial
   template "#{filepath}.erb" do
     source 'zone.erb'
@@ -98,15 +118,15 @@ node['bind-ddns']['zones'].each do |zone|
     group node['bind-ddns']['user']
     mode 0644
     variables({
-      'global_ttl' => zone['global_ttl'],
-      'contact' => zone['contact'],
+      'global_ttl' => zone['global_ttl'] || default['global_ttl'],
+      'contact' => zone['contact'] || "contact@#{zone['name']}",
       'ns' => zone['ns'],
       'a' => resolved_zone_a,
-      'refresh' => zone['refresh'],
-      'retry' => zone['retry'],
-      'expire' => zone['expire'],
-      'negcachettl' => zone['negcachettl'],
-      'extra_records' => zone['extra_records']
+      'refresh' => zone['refresh'] || default['refresh'],
+      'retry' => zone['retry'] || default['retry'],
+      'expire' => zone['expire'] || default['expire'],
+      'negcachettl' => zone['negcachettl'] || default['negcachettl'],
+      'extra_records' => zone['extra_records'] || default['extra_records']
     })
     notifies :run, "execute[freeze #{zone['name']}]", :immediately if z_exists
     notifies :create, "template[#{filename}]", :immediately

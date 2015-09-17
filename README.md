@@ -71,6 +71,9 @@ have a default defined in [attributes/default.rb](attributes/default.rb).
 Please read it to have a comprehensive view of what and how you can configure
 this cookbook behavior.
 
+Note: for fields needing an IP address, it is possible to set an interface
+name, which will be resolved to its first non-local address.
+
 Recipes
 -------
 

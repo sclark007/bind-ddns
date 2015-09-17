@@ -76,16 +76,9 @@ suites:
               type: master
               file: '"dynamic/db-kitchen"'
               allow-update: '{ key kitchen; }'
-            global_ttl: 1d
-            contact: "root@kitchen."
             ns: [ ns.kitchen. ]
             a:
               ns.kitchen.: eth0
-            refresh: 3h
-            retry: 30m
-            expire: 4w
-            negcachettl: 1h
-            extra_records: []
         keys:
           - name: kitchen
             secret: 9ZDQZxLEBuho4+O0EuGOYA==

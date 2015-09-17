@@ -56,7 +56,14 @@ default['bind-ddns']['keys'] = []
 default['bind-ddns']['default_key_algorithm'] = 'HMAC-MD5'
 
 # records declared to the server through nsupdate
+# interface names will be resolved to their first non-local IP address
 default['bind-ddns']['records'] = []
+# Example of record
+# {
+#   'domain' => 'server.myzone',
+#   'server' => 'localhost',
+#   'data' => 'eth0'
+# }
 
 # Logging configuration
 default['bind-ddns']['channels'] = [
@@ -72,6 +79,15 @@ default['bind-ddns']['channels'] = [
 default['bind-ddns']['categories'] = []
 
 # Zones configuration
+default['bind-ddns']['zones_default'] = {
+  'global_ttl' => '1d',
+  'refresh' => '3h',
+  'retry' => '30m',
+  'expire' => '4w',
+  'negcachettl' => '1h',
+  'extra_records' => []
+}
+
 default['bind-ddns']['zones'] = [
   {
     'name' => '"." IN',
@@ -87,16 +103,16 @@ default['bind-ddns']['zones'] = [
   #     'type' => 'master',
   #     'file' => '"master/myzone"'
   #   },
-  #   global_ttl => 1d,
-  #   contact => "foo@myzone",
-  #   ns => [],
-  #   refresh => 3h,
-  #   retry => 30m,
-  #   expire => 4w,
-  #   negcachettl => 1h,
-  #   extra_records => []
-  #   serial => 123 # set it ONLY if you want to force the serial
-  #     # by default (ie if nil), it uses the current unix time
+  #   'ns' => [ 'ns.myzone' ],
+  #   'a' => {
+  #     # interface names will be resolved to their first non-local IP address
+  #     'ns.myzone' => 'eth0'
+  #   }
+  #   'contact' => "foo@myzone", # default is contact@'myzone'
+  #   'serial' => 123 # set it ONLY if you want to force the serial
+  #       # by default (ie if nil), it uses the current unix time
+  #
+  #   # other fields have default defined in 'zones_default'
   # }
 ]
 

@@ -65,7 +65,7 @@ describe file('/etc/named-kitchen.key') do
 end
 
 describe file('/var/named/dynamic/db-kitchen.erb') do
-  its(:content) { should contain '@ IN SOA ns.kitchen. root@kitchen. \(' }
+  its(:content) { should contain '@ IN SOA ns.kitchen. contact@kitchen \(' }
   its(:content) { should contain '  IN NS ns.kitchen.' }
   its(:content) { should contain "ns.kitchen. IN A #{get_ip_eth0}" }
 end
