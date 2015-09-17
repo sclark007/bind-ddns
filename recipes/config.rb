@@ -24,7 +24,7 @@ key_files = []
 node['bind-ddns']['keys'].each do |key|
   key = key.dup
   key['algorithm'] ||= node['bind-ddns']['default_key_algorithm']
-  filename = "named-#{key['name']}.key"
+  filename = "named-#{key['name'].gsub(/\./,'-')}.key"
 
   template ::File.join(node['bind-ddns']['config_dir'], filename) do
     source 'key.erb'

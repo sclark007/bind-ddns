@@ -20,11 +20,11 @@ describe command('echo "quit" | nsupdate') do
   its(:exit_status) { should eq 0 }
 end
 
-describe host('ns.kitchen') do
+describe host('ns.chef.kitchen') do
   it { should be_reachable }
 end
 
-describe host('client-ddns.kitchen') do
+describe host('client-ddns.chef.kitchen') do
   it { should be_resolvable.by('dns') }
   its(:ipv4_address) { should eq get_ip_eth0 }
 end

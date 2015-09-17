@@ -23,9 +23,9 @@ records.each do |record|
   resource.cookbook_name= cookbook_name
   resource.recipe_name= recipe_name
 
-  # Get default zone name from last part of domain
+  # Get default zone name from tail part of domain (without the head)
   zone = record['zone']
-  zone = record['domain'].split('.').last unless record['zone']
+  zone = record['domain'].split('.').drop(1).join('.') unless record['zone']
   zone = zone.gsub /\.$/, ''
   resource.zone zone
 

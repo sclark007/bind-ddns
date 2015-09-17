@@ -66,24 +66,24 @@ suites:
       bind-ddns:
         set_resolv_conf: true
         server: localhost
-        search: kitchen
+        search: chef.kitchen
         options:
           listen-on: "port 53 { localnets; }"
           allow-query: "{ localnets; }"
         zones:
-          - name: kitchen
+          - name: chef.kitchen
             config:
               type: master
-              file: dynamic/db-kitchen
-              allow-update: "{ key kitchen; }"
-            ns: [ ns.kitchen. ]
+              file: dynamic/db-chef-kitchen
+              allow-update: "{ key chef.kitchen; }"
+            ns: [ ns.chef.kitchen. ]
             a:
-              ns.kitchen.: eth0
+              ns.chef.kitchen.: eth0
         keys:
-          - name: kitchen
+          - name: chef.kitchen
             secret: 9ZDQZxLEBuho4+O0EuGOYA==
         records:
-          - domain: server-ddns.kitchen
+          - domain: server-ddns.chef.kitchen
             data: eth0
 
   - name: client
@@ -95,10 +95,10 @@ suites:
       - recipe[bind-ddns::client]
     attributes:
       bind-ddns:
-        server: ns.kitchen
+        server: ns.chef.kitchen
         keys:
-          - name: kitchen
+          - name: chef.kitchen
             secret: 9ZDQZxLEBuho4+O0EuGOYA==
         records:
-          - domain: client-ddns.kitchen
+          - domain: client-ddns.chef.kitchen
             data: eth0
