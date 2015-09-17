@@ -23,11 +23,13 @@ records.each do |record|
   resource.cookbook_name= cookbook_name
   resource.recipe_name= recipe_name
 
+  # Get default zone name from last part of domain
   zone = record['zone']
   zone = record['domain'].split('.').last unless record['zone']
   zone = zone.gsub /\.$/, ''
   resource.zone zone
 
+  # Fetch default key based on zone name
   keys = node['bind-ddns']['keys'].reject {|k| k['name'] != zone }
   unless keys.empty?
     raise "More than one key with name #{zone}!" if keys.size > 1
@@ -37,6 +39,10 @@ records.each do |record|
     resource.hmac key['hmac']
   end
 
+  # Set global server as default
+  resource.server node['bind-ddns']['server']
+
+  # Set all attributes, override defaults
   record.each do |name, value|
     resource.send(name, value)
   end

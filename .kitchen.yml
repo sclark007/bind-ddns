@@ -65,7 +65,7 @@ suites:
     attributes:
       bind-ddns:
         set_resolv_conf: true
-        server: ns.kitchen
+        server: localhost
         search: kitchen
         options:
           listen-on: "port 53 { localnets; }"
@@ -84,7 +84,6 @@ suites:
             secret: 9ZDQZxLEBuho4+O0EuGOYA==
         records:
           - domain: server-ddns.kitchen
-            server: localhost
             data: eth0
 
   - name: client
@@ -102,5 +101,4 @@ suites:
             secret: 9ZDQZxLEBuho4+O0EuGOYA==
         records:
           - domain: client-ddns.kitchen
-            server: ns.kitchen
             data: eth0

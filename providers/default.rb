@@ -60,6 +60,7 @@ end
 def check_current(domain, ip, server)
   resolver = Resolv::DNS.new(:nameserver => server)
   addresses = resolver.getaddresses(domain).map(&:to_s)
+  resolver.close
   { 'total' => addresses.size, 'present' => addresses.include?(ip) }
 end
 
