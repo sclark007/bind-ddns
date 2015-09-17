@@ -62,24 +62,33 @@ node['bind-ddns']['zones'].each do |zone|
   # Check configuration completeness
   prefix = "#{cookbook_name}::#{recipe_name}: zone #{zone['name']}:"
 
-  [ 'name', 'config', 'ns', 'a' ].each do |field|
+  [ 'name', 'config' ].each do |field|
     raise "#{prefix} mandatory field '#{field}' is nil" if zone[field].nil?
   end
+
   [ 'type', 'file' ].each do |field|
     if zone['config'][field].nil?
       raise "#{prefix} mandatory field 'config/#{field}' is nil"
     end
   end
 
-  # NS entries must have a match in A records
-  unless zone['ns'].map { |ns| zone['a'].keys.include? ns }.all?
-    raise "#{prefix} some nameservers defined in 'ns' does not " +
-      "have a corresponding A entry"
+  # For a master zone, we need A and NS records
+  if zone['config']['type'] == 'master'
+    [ 'ns', 'a' ].each do |field|
+      raise "#{prefix} mandatory field '#{field}' is nil" if zone[field].nil?
+    end
+
+    # NS entries must have a match in A records
+    unless zone['ns'].map { |ns| zone['a'].keys.include? ns }.all?
+      raise "#{prefix} some nameservers defined in 'ns' does not " +
+        "have a corresponding A entry"
+    end
+
+    raise "No nameserver defined for zone #{zone['name']}" if zone['ns'].empty?
   end
 
   filename = zone['config']['file'].gsub(/\'|\"/, '')
   filepath = ::File.join(node['bind-ddns']['var_dir'], filename)
-  raise "No nameserver defined for zone #{zone['name']}" if zone['ns'].empty?
 
   z_exists = ::File.exist?('/etc/rndc.key') && ::File.exist?(filepath)
 

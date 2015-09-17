@@ -20,7 +20,7 @@ module BindDdns
     result = {}
     hash.each do |key, value|
       result[resolve_iface(key)] = resolve_iface(value)
-    end
+    end unless hash.nil?
     result
   end
 
