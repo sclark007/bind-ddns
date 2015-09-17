@@ -15,8 +15,8 @@
 #
 
 # Monkey patch RunAction to create a suites scheduler that consider
-# - dnsdock
 # - each suite is a different node
+# - some suites must converge first
 
 require 'kitchen/command'
 
@@ -31,28 +31,39 @@ module Kitchen
         # in CommonSandbox
         $suites = @config.send(:data).suite_data
 
-        # Extract dnsdock instance(s) to be able to launch it first
+        # Extract helper instance(s) to be able to launch it first
         # so it is ready for other containers
-        dnsdocks = instances.select {|i| i.suite.name.include? "server" }
-        services = instances - dnsdocks
+        helpers = instances.select do |i|
+          (i.suite.name.include? "server")
+        end
+        services = instances - helpers
 
         case action
         when :destroy
           run_action_official(action, instances, *args)
         when :test
           run_action_official(:destroy, instances)
-          run_action_official(:create, dnsdocks)
-          run_action_official(:create, services)
-          run_action_official(:converge, instances)
+          run_converge(instances, services, helpers)
           run_action_official(:verify, instances)
           run_action_official(:destroy, instances) if args.first == :passing
+        when :create
+          run_create(instances, services, helpers)
+        when :converge
+          run_converge(instances, services, helpers)
         else
-          # Always run create first to initiaze all dockers
-          run_action_official(:create, dnsdocks)
-          run_action_official(:create, services)
-          run_action_official(:converge, instances) if action == :verify
+          run_converge(instances, services, helpers) if action == :verify
           run_action_official(action, instances, *args) if action != :create
         end
+      end
+
+      def run_create(instances, services, helpers)
+        run_action_official(:create, helper)
+        run_action_official(:create, services)
+      end
+
+      def run_converge(instances, services, helpers)
+        run_action_official(:converge, helpers)
+        run_action_official(:converge, services)
       end
 
     end
