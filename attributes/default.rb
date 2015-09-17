@@ -22,11 +22,12 @@ default['bind-ddns']['config_dir'] = '/etc'
 default['bind-ddns']['var_dir'] = '/var/named'
 default['bind-ddns']['service_name'] = 'named'
 
+# Set resolv.conf
 default['bind-ddns']['set_resolv_conf'] = false
-
 default['bind-ddns']['server'] = 'localhost'
 default['bind-ddns']['search'] = nil
 
+# Default Bind options (as provided by centos package
 default['bind-ddns']['options'] = {
   'listen-on' => 'port 53 { 127.0.0.1; }',
   'listen-on-v6' => 'port 53 { ::1; }',
@@ -57,6 +58,7 @@ default['bind-ddns']['default_key_algorithm'] = 'HMAC-MD5'
 # records declared to the server through nsupdate
 default['bind-ddns']['records'] = []
 
+# Logging configuration
 default['bind-ddns']['channels'] = [
   {
     'name' => 'default_debug',
@@ -69,6 +71,7 @@ default['bind-ddns']['channels'] = [
 
 default['bind-ddns']['categories'] = []
 
+# Zones configuration
 default['bind-ddns']['zones'] = [
   {
     'name' => '"." IN',
@@ -97,6 +100,7 @@ default['bind-ddns']['zones'] = [
   # }
 ]
 
+# Included file (from named.conf)
 default['bind-ddns']['default_files'] = [
   'named.rfc1912.zones',
   'named.root.key'
