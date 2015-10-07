@@ -58,7 +58,7 @@ action :delete do
 end
 
 def check_current(domain, ip, server)
-  resolver = Resolv::DNS.new(:nameserver => server)
+  resolver = Resolv::DNS.new(server.nil? ? nil : {:nameserver => server})
   addresses = resolver.getaddresses(domain).map(&:to_s)
   resolver.close
   { 'total' => addresses.size, 'present' => addresses.include?(ip) }
@@ -67,9 +67,10 @@ end
 def nsupdate(opt,server,key,zone,action,domain,ttl,dnsclass,type,data,other)
   data = resolve_iface data
   cmd = "nsupdate #{opt}"
+  server = "server #{server}" unless server.nil?
   zone = "zone #{zone}" unless zone.nil?
   config = <<-EOS.gsub /^ *$\n/, ''
-    server #{server}
+    #{server}
     key #{key['hmac']} #{key['keyname']} #{key['secret']}
     #{zone}
     #{other}

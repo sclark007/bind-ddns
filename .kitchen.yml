@@ -95,7 +95,6 @@ suites:
       - recipe[bind-ddns::client]
     attributes:
       bind-ddns:
-        server: ns.chef.kitchen
         keys:
           - name: chef.kitchen
             secret: 9ZDQZxLEBuho4+O0EuGOYA==
