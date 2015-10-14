@@ -108,7 +108,7 @@ default['bind-ddns']['zones'] = [
   #     # interface names will be resolved to their first non-local IP address
   #     'ns.myzone' => 'eth0'
   #   }
-  #   'contact' => "foo@myzone", # default is contact@'myzone'
+  #   'contact' => "foo.zone.com.", # default is hostmaster
   #   'serial' => 123 # set it ONLY if you want to force the serial
   #       # by default (ie if nil), it uses the current unix time
   #

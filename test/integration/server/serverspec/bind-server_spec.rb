@@ -66,7 +66,7 @@ end
 
 describe file('/var/named/dynamic/db-chef-kitchen.erb') do
   its(:content) {
-    should contain '@ IN SOA ns.chef.kitchen. contact@chef.kitchen \('
+    should contain '@ IN SOA ns.chef.kitchen. hostmaster \('
   }
   its(:content) { should contain '  IN NS ns.chef.kitchen.' }
   its(:content) { should contain "ns.chef.kitchen. IN A #{get_ip_eth0}" }

@@ -128,7 +128,7 @@ node['bind-ddns']['zones'].each do |zone|
     mode 0644
     variables({
       'global_ttl' => zone['global_ttl'] || default['global_ttl'],
-      'contact' => zone['contact'] || "contact@#{zone['name']}",
+      'contact' => zone['contact'] || 'hostmaster',
       'ns' => zone['ns'],
       'a' => resolved_zone_a,
       'refresh' => zone['refresh'] || default['refresh'],
