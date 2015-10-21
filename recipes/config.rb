@@ -90,11 +90,12 @@ node['bind-ddns']['zones'].each do |zone|
   filename = zone['config']['file'].gsub(/\'|\"/, '')
   filepath = ::File.join(node['bind-ddns']['var_dir'], filename)
 
-  z_exists = ::File.exist?('/etc/rndc.key') && ::File.exist?(filepath)
+  z_exists = ::File.exist?('/etc/rndc.key') && ::File.exist?(filepath) &&
+    system('rndc status > /dev/null 2>&1')
 
   # Freeze and reload the zone if it exists (condition in notifies)
   execute "freeze #{zone['name']}" do
-    command "rndc freeze #{zone['name']} | true"
+    command "rndc freeze #{zone['name']}"
     action :nothing
   end
 
