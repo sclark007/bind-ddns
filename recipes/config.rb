@@ -91,8 +91,12 @@ node['bind-ddns']['zones'].each do |zone|
   filename = zone['config']['file'].gsub(/\'|\"/, '')
   filepath = ::File.join(node['bind-ddns']['var_dir'], filename)
 
-  z_exists = ::File.exist?('/etc/rndc.key') && ::File.exist?(filepath) &&
-    system('rndc status > /dev/null 2>&1')
+  status = Mixlib::ShellOut.new('rndc status')
+  z_exists = if ::File.exist?('/etc/rndc.key') && ::File.exist?(filepath)
+               status.run_command
+               !status.error?
+             else false
+             end
 
   # Freeze and reload the zone if it exists (condition in notifies)
   execute "freeze #{zone['name']}" do
