@@ -14,6 +14,8 @@
 # limitations under the License.
 #
 
+require 'socket'
+
 module BindDdns
 
   def hash_resolve_iface(hash)
@@ -27,15 +29,17 @@ module BindDdns
   # iface may be an interface name, in the case we resolve its inet address
   def resolve_iface(iface)
     result = iface # if iface is not an interface, we do nothing
-    # check if iface is an interface
-    if node['network']['interfaces'].keys.include? iface
-      addresses =  node['network']['interfaces'][iface]['addresses']
-      inet = addresses.map do |address, info|
-        address if info['family'] == 'inet'
-      end.compact
 
-      raise "No or multiple inet addresses for #{iface}" unless inet.size == 1
-      result = inet.first
+    ifaddrs = Socket.getifaddrs
+    ifaces = ifaddrs.map {|ifaddr| ifaddr.name}.uniq
+    # check if iface is an interface
+    if ifaces.include? iface
+      inets = ifaddrs.select do |ifaddr|
+        ifaddr.name == iface && !ifaddr.addr.nil? && ifaddr.addr.ipv4?
+      end
+      addrs = inets.map {|i| i.addr.ip_address}
+      raise "No or multiple inet addresses for #{iface}" unless addrs.size == 1
+      result = addrs.first
     end
     result
   end

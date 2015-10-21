@@ -16,6 +16,7 @@
 
 # Load our library
 ::Chef::Recipe.send(:include, BindDdns)
+::Chef::Resource.send(:include, BindDdns)
 
 # Keep track of any key files
 key_files = []
@@ -116,8 +117,21 @@ node['bind-ddns']['zones'].each do |zone|
     action :nothing
   end
 
+  resolved_zone_a =
+    begin
+      hash_resolve_iface(zone['a'])
+    rescue StandardError
+      nil
+    end
+
   # Interpret interface name to replace them with their inet address
-  resolved_zone_a = hash_resolve_iface(zone['a'])
+  ruby_block "Set A for #{zone['name']}" do
+    block do
+      resource = resources(template: "#{filepath}.erb")
+      resource.variables['a'] = hash_resolve_iface(zone['a'])
+    end
+    action :run
+  end if resolved_zone_a.nil?
 
   default = node['bind-ddns']['zones_default']
 
