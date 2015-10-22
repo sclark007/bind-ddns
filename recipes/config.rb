@@ -128,6 +128,11 @@ node['bind-ddns']['zones'].each do |zone|
       nil
     end
 
+  # Remove zone journal if named is stopped and the zone has been modified
+  file "#{filepath}.jnl" do
+    action :nothing
+  end
+
   # Interpret interface name to replace them with their inet address
   ruby_block "Set A for #{zone['name']}" do
     block do
@@ -156,6 +161,7 @@ node['bind-ddns']['zones'].each do |zone|
       'negcachettl' => zone['negcachettl'] || default['negcachettl'],
       'extra_records' => zone['extra_records'] || default['extra_records']
     })
+    notifies :delete, "file[#{filepath}.jnl]", :immediately if !z_exists
     notifies :run, "execute[freeze #{zone['name']}]", :immediately if z_exists
     notifies :create, "template[#{filename}]", :immediately
     notifies :run, "execute[restart #{zone['name']}]", :immediately if z_exists
