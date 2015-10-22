@@ -15,7 +15,6 @@
 #
 
 # Monkey patch kitchen-docker:
-# - add install pipework and create a new interface àfter creation
 # - use docker login instead of ssh
 # - improve destroy time when systemd is used inside docker
 #
@@ -25,38 +24,10 @@
 #       -with-test-kitchen-and-docker-bf638ab95a0a
 
 require 'kitchen/driver/docker'
-require 'net/http'
 
 module Kitchen
   module Driver
     class Docker < Kitchen::Driver::SSHBase
-      alias_method :create_official, :create
-
-      default_config :pipework_path, File.join(Dir.pwd, '.kitchen')
-
-      def create(state)
-        create_official(state)
-        if config[:pipework]
-          bin = install_pipework
-          iface = config[:pipework_iface]
-          ip = config[:pipework_ip]
-          cid = state[:container_id]
-          cmd = "sudo #{bin} #{iface} #{cid} #{ip}"
-          %x(#{cmd})
-        end
-      end
-
-      def install_pipework
-        path = config[:pipework_path]
-        bin = File.join(path, 'pipework')
-        url =
-          'https://raw.githubusercontent.com/jpetazzo/pipework/master/pipework'
-        unless File.exist?(bin)
-          File.write(bin, Net::HTTP.get(URI.parse(url))) unless File.exist?(bin)
-          File.chmod(0755, bin)
-        end
-        return bin
-      end
 
       def login_command(state)
         LoginCommand.new(
