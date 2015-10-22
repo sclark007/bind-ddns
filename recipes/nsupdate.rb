@@ -36,7 +36,6 @@ records.each do |record|
     key = keys.first
     resource.keyname key['name']
     resource.secret key['secret']
-    resource.hmac key['hmac']
   end
 
   # Set global server as default

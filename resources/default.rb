@@ -24,7 +24,6 @@ attributes = [
   [ :zone, :kind_of => String, :default => nil ],
   [ :keyname, :kind_of => String, :default => nil, :required => true ],
   [ :secret, :kind_of => String, :default => nil, :required => true ],
-  [ :hmac, :kind_of => String, :default => nil ],
 
   [ :other, :kind_of => String, :default => nil ],
   [ :cli_options, :kind_of => String, :default => nil ],

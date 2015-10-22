@@ -21,7 +21,10 @@ use_inline_resources
 
 action :add do
   nr = new_resource
-  key = { 'hmac' => nr.hmac, 'keyname' => nr.keyname, 'secret' => nr.secret }
+  key = {
+    'keyname' => nr.keyname,
+    'secret' => nr.secret
+  }
   data = resolve_iface nr.data
   current = check_current(nr.domain, data, nr.server)
 
@@ -44,7 +47,10 @@ end
 
 action :delete do
   nr = new_resource
-  key = { 'hmac' => nr.hmac, 'keyname' => nr.keyname, 'secret' => nr.secret }
+  key = {
+    'keyname' => nr.keyname,
+    'secret' => nr.secret
+  }
   data = resolve_iface nr.data
   current = check_current(nr.domain, data, nr.server)
 
@@ -71,7 +77,7 @@ def nsupdate(opt,server,key,zone,action,domain,ttl,dnsclass,type,data,other)
   zone = "zone #{zone}" unless zone.nil?
   config = <<-EOS.gsub /^ *$\n/, ''
     #{server}
-    key #{key['hmac']} #{key['keyname']} #{key['secret']}
+    key #{key['keyname']} #{key['secret']}
     #{zone}
     #{other}
     update #{action} #{domain} #{ttl} #{dnsclass} #{type} #{data}

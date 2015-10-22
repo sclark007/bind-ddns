@@ -50,8 +50,8 @@ default['bind-ddns']['keys'] = []
 # Example of a key definition, algorithm is optional
 # {
 #   'name' => 'keyname',
-#   algorithm => 'HMAC-MD5'
-#   secret => 'XXXX'
+#   'algorithm' => 'HMAC-MD5'
+#   'secret' => 'XXXX'
 # }
 default['bind-ddns']['default_key_algorithm'] = 'HMAC-MD5'
 
