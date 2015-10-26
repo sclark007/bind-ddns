@@ -6,6 +6,6 @@ description 'Install and configure ISC Bind on server and nsupdate on clients'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 source_url 'https://gitlab.com/s4m-chef-repositories/bind-ddns'
 issues_url 'https://gitlab.com/s4m-chef-repositories/bind-ddns/issues'
-version '1.1.0'
+version '1.2.0'
 
 supports 'centos',  '>= 7.1'
