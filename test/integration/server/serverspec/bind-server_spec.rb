@@ -41,6 +41,8 @@ describe file('/etc/resolv.conf') do
 
     search chef.kitchen
     nameserver 127.0.0.1
+    nameserver 8.8.8.8
+    nameserver 8.8.4.4
   eos
 end
 

@@ -25,6 +25,7 @@ default['bind-ddns']['service_name'] = 'named'
 # Set resolv.conf
 default['bind-ddns']['set_resolv_conf'] = false
 default['bind-ddns']['server'] = nil
+default['bind-ddns']['secondary_servers'] = []
 default['bind-ddns']['search'] = nil
 
 # Default Bind options (as provided by centos package

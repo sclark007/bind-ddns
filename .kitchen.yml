@@ -66,6 +66,9 @@ suites:
       bind-ddns:
         set_resolv_conf: true
         server: localhost
+        secondary_servers:
+          - "8.8.8.8"
+          - "8.8.4.4"
         search: chef.kitchen
         options:
           listen-on: "port 53 { localnets; }"
