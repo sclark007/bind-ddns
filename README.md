@@ -10,6 +10,20 @@ full Dynamic DNS support.
 On client side, install **nsupdate**, provide a generic provider and a recipe
 to update DNS entries.
 
+Requirements
+------------
+
+### Cookbooks and gems
+
+Declared in [metadata.rb](metadata.rb) and in [Gemfile](Gemfile).
+
+### Platforms
+
+- RHEL Family 7, tested on Centos
+
+Note: it should work fine on Debian 8 but the official docker image does not
+allow systemd to work easily, so it could not be tested.
+
 Usage
 -----
 
@@ -37,29 +51,6 @@ server:
 
 For more information, see [.kitchen.yml](.kitchen.yml) and [test](test)
 directory.
-
-Changelog
----------
-
-Available in [CHANGELOG](CHANGELOG).
-
-Requirements
-------------
-
-### Cookbooks
-
-Declared in [metadata.rb](metadata.rb).
-
-### Gems
-
-Declared in [Gemfile](Gemfile).
-
-### Platforms
-
-- RHEL Family 7, tested on Centos
-
-Note: it should work fine on Debian 8 but the official docker image does not
-allow systemd to work easily, so it could not be tested.
 
 Attributes
 ----------
@@ -131,6 +122,11 @@ end
 ```
 
 Add action `:delete` to delete an entry.
+
+Changelog
+---------
+
+Available in [CHANGELOG](CHANGELOG).
 
 Contributing
 ------------
