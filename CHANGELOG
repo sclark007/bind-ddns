@@ -1,0 +1,21 @@
+Changelog
+=========
+
+1.1.0
+-----
+
+- Fix failed run when a zone is reloaded while named is stopped
+- Fix failed run when an interface name is used for its ip and this ip is
+  fetched during the same run
+- Fix failed run when a zone is modified while named is stopped
+- Remove useless field 'hmac' in resource and provider
+
+1.0.1
+-----
+
+- Fix default hostmaster email
+
+1.0.0
+-----
+
+- Initial version with Centos 7 support
