@@ -17,11 +17,10 @@
 records = node['bind-ddns']['records']
 
 records.each do |record|
-  resource = Chef::Resource::BindDdns.new(
-    record['domain'], run_context
-  )
-  resource.cookbook_name= cookbook_name
-  resource.recipe_name= recipe_name
+  resource = bind_ddns "nsupdate #{record['domain']}" do
+    server node['bind-ddns']['server'] # Set global server as default
+    action :add
+  end
 
   # Get default zone name from tail part of domain (without the head)
   zone = record['zone']
@@ -38,19 +37,8 @@ records.each do |record|
     resource.secret key['secret']
   end
 
-  # Set global server as default
-  resource.server node['bind-ddns']['server']
-
   # Set all attributes, override defaults
   record.each do |name, value|
     resource.send(name, value)
-  end
-
-  action = record['action']
-  action = :add if action.nil?
-  ruby_block "run bind-ddns[#{record['domain']}]" do
-    block do
-      resource.run_action action
-    end
   end
 end
