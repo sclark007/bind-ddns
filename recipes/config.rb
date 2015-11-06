@@ -121,26 +121,10 @@ node['bind-ddns']['zones'].each do |zone|
     action :nothing
   end
 
-  resolved_zone_a =
-    begin
-      hash_resolve_iface(zone['a'])
-    rescue StandardError
-      nil
-    end
-
   # Remove zone journal if named is stopped and the zone has been modified
   file "#{filepath}.jnl" do
     action :nothing
   end
-
-  # Interpret interface name to replace them with their inet address
-  ruby_block "Set A for #{zone['name']}" do
-    block do
-      resource = resources(template: "#{filepath}.erb")
-      resource.variables['a'] = hash_resolve_iface(zone['a'])
-    end
-    action :run
-  end if resolved_zone_a.nil?
 
   default = node['bind-ddns']['zones_default']
 
@@ -150,17 +134,21 @@ node['bind-ddns']['zones'].each do |zone|
     owner node['bind-ddns']['user']
     group node['bind-ddns']['user']
     mode 0644
-    variables({
-      'global_ttl' => zone['global_ttl'] || default['global_ttl'],
-      'contact' => zone['contact'] || 'hostmaster',
-      'ns' => zone['ns'],
-      'a' => resolved_zone_a,
-      'refresh' => zone['refresh'] || default['refresh'],
-      'retry' => zone['retry'] || default['retry'],
-      'expire' => zone['expire'] || default['expire'],
-      'negcachettl' => zone['negcachettl'] || default['negcachettl'],
-      'extra_records' => zone['extra_records'] || default['extra_records']
-    })
+    variables(
+      lazy {
+        {
+          'global_ttl' => zone['global_ttl'] || default['global_ttl'],
+          'contact' => zone['contact'] || 'hostmaster',
+          'ns' => zone['ns'],
+          'a' => hash_resolve_iface(zone['a']),
+          'refresh' => zone['refresh'] || default['refresh'],
+          'retry' => zone['retry'] || default['retry'],
+          'expire' => zone['expire'] || default['expire'],
+          'negcachettl' => zone['negcachettl'] || default['negcachettl'],
+          'extra_records' => zone['extra_records'] || default['extra_records']
+        }
+      }
+    )
     notifies :delete, "file[#{filepath}.jnl]", :immediately if !z_exists
     notifies :run, "execute[freeze #{zone['name']}]", :immediately if z_exists
     notifies :create, "template[#{filename}]", :immediately
