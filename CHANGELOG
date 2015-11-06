@@ -1,6 +1,14 @@
 Changelog
 =========
 
+1.3.0
+-----
+
+- Use lazy to simplify the definition of template "#{filepath}.erb"
+- Small cleanup of default provider & ressource, key info are required
+- Fix idempotency by removing the block hack used to run the ressource
+- Add a test case on :delete for default provider
+
 1.2.0
 -----
 
