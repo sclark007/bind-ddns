@@ -71,7 +71,6 @@ def check_current(domain, ip, server)
 end
 
 def nsupdate(opt,server,key,zone,action,domain,ttl,dnsclass,type,data,other)
-  data = resolve_iface data
   cmd = "nsupdate #{opt}"
   server = "server #{server}" unless server.nil?
   zone = "zone #{zone}" unless zone.nil?
