@@ -88,6 +88,8 @@ suites:
         records:
           - domain: server-ddns.chef.kitchen
             data: eth0
+          - domain: test-delete.chef.kitchen
+            data: "1.2.3.4"
 
   - name: client
     driver:
@@ -104,3 +106,8 @@ suites:
         records:
           - domain: client-ddns.chef.kitchen
             data: eth0
+          - domain: test-delete.chef.kitchen
+            zone: chef.kitchen.
+            keyname: chef.kitchen
+            secret: 9ZDQZxLEBuho4+O0EuGOYA==
+            action: delete
