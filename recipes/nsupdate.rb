@@ -18,9 +18,12 @@ records = node['bind-ddns']['records']
 
 records.each do |record|
   resource = bind_ddns "nsupdate #{record['domain']}" do
-    server node['bind-ddns']['server'] # Set global server as default
     action :add
   end
+
+  # Set global server as default
+  global_server = node['bind-ddns']['server']
+  resource.server global_server unless global_server.nil?
 
   # Get default zone name from tail part of domain (without the head)
   zone = record['zone']
