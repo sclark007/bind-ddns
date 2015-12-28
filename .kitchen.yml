@@ -41,18 +41,16 @@ platforms:
       volume: /sys/fs/cgroup:/sys/fs/cgroup:ro
       privileged: true
       run_command: /usr/sbin/init # Start systemd as root process
+      # general provisionning for kitchen
       require_chef_omnibus: false
       provision_command:
         - >
           curl -L https://www.getchef.com/chef/install.sh | bash &&
-          yum install -y hostname
-        - >
           GEM_HOME=/tmp/verifier/gems GEM_PATH=/tmp/verifier/gems
           GEM_CACHE=/tmp/verifier/gems/cache
           /opt/chef/embedded/bin/gem install
           thor busser busser-serverspec serverspec bundler &&
           chown -R kitchen:kitchen /tmp/verifier
-        - yum install -y net-tools patch make automake autoconf gcc
 
 suites:
   # Install a ddns server
