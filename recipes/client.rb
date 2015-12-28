@@ -14,9 +14,12 @@
 # limitations under the License.
 #
 
+# Initialization
+include_recipe "#{cookbook_name}::init"
+
 # Install necessary package then apply records
 include_recipe "#{cookbook_name}::package-client"
-if node['bind-ddns']['set_resolv_conf']
+if node.run_state['bind-ddns']['config']['set_resolv_conf']
   include_recipe "#{cookbook_name}::resolvconf"
 end
 include_recipe "#{cookbook_name}::nsupdate"

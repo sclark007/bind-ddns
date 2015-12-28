@@ -14,6 +14,10 @@
 # limitations under the License.
 #
 
+# Config initialization
+include_recipe "#{cookbook_name}::init"
+config = node.run_state['bind-ddns']['config']
+
 # Load our library
 ::Chef::Recipe.send(:include, BindDdns)
 ::Chef::Resource.send(:include, BindDdns)
@@ -22,15 +26,15 @@
 key_files = []
 
 # Write key files
-node['bind-ddns']['keys'].each do |key|
+config['keys'].each do |key|
   key = key.dup
-  key['algorithm'] ||= node['bind-ddns']['default_key_algorithm']
+  key['algorithm'] ||= config['default_key_algorithm']
   filename = "named-#{key['name'].gsub(/\./,'-')}.key"
 
-  template ::File.join(node['bind-ddns']['config_dir'], filename) do
+  template ::File.join(config['config_dir'], filename) do
     source 'key.erb'
-    owner node['bind-ddns']['user']
-    group node['bind-ddns']['user']
+    owner config['user']
+    group config['user']
     mode 0644
     variables 'key' => key
     notifies :run, 'execute[named-checkconf]', :delayed
@@ -40,25 +44,25 @@ node['bind-ddns']['keys'].each do |key|
 end
 
 # Write named configuration
-named_conf = ::File.join(node['bind-ddns']['config_dir'], 'named.conf')
+named_conf = ::File.join(config['config_dir'], 'named.conf')
 
 template named_conf do
   source 'named.conf.erb'
   mode '644'
   variables({
-    'options' => node['bind-ddns']['options'],
-    'channels' => node['bind-ddns']['channels'],
-    'categories' => node['bind-ddns']['categories'],
-    'zones' => node['bind-ddns']['zones'],
-    'included_files' => node['bind-ddns']['default_files'].dup +
-      node['bind-ddns']['included_files'] + key_files,
-    'config_dir' => node['bind-ddns']['config_dir']
+    'options' => config['options'],
+    'channels' => config['channels'],
+    'categories' => config['categories'],
+    'zones' => config['zones'],
+    'included_files' => config['default_files'].dup +
+      config['included_files'] + key_files,
+    'config_dir' => config['config_dir']
   })
   notifies :run, 'execute[named-checkconf]', :delayed
 end
 
 # Write zone files
-node['bind-ddns']['zones'].each do |zone|
+config['zones'].each do |zone|
 
   # Check configuration completeness
   prefix = "#{cookbook_name}::#{recipe_name}: zone #{zone['name']}:"
@@ -89,7 +93,7 @@ node['bind-ddns']['zones'].each do |zone|
   end
 
   filename = zone['config']['file'].gsub(/\'|\"/, '')
-  filepath = ::File.join(node['bind-ddns']['var_dir'], filename)
+  filepath = ::File.join(config['var_dir'], filename)
 
   status = Mixlib::ShellOut.new('rndc status')
   z_exists = if ::File.exist?('/etc/rndc.key') && ::File.exist?(filepath)
@@ -114,8 +118,8 @@ node['bind-ddns']['zones'].each do |zone|
     path filepath
     source "#{filepath}.erb"
     local true
-    owner node['bind-ddns']['user']
-    group node['bind-ddns']['user']
+    owner config['user']
+    group config['user']
     mode 0644
     variables :serial => zone['serial'] || Time.now.to_i
     action :nothing
@@ -126,13 +130,13 @@ node['bind-ddns']['zones'].each do |zone|
     action :nothing
   end
 
-  default = node['bind-ddns']['zones_default']
+  default = config['zones_default']
 
   # Create a template with everything except the serial
   template "#{filepath}.erb" do
     source 'zone.erb'
-    owner node['bind-ddns']['user']
-    group node['bind-ddns']['user']
+    owner config['user']
+    group config['user']
     mode 0644
     variables(
       lazy {

@@ -14,21 +14,14 @@
 # limitations under the License.
 #
 
-# Config initialization
-include_recipe "#{cookbook_name}::init"
-config = node.run_state['bind-ddns']['config']
+# Shorter name
+attrs = node['bind-ddns']
 
-# If server is a name, we assume it is localhost or an alias
-server = config['server']
-server_addr = !!(server =~ Resolv::IPv4::Regex) ? server : '127.0.0.1'
+# Detect if current node is a server or a client
+status = 'client'
+status = 'server' if (attrs['servers'] || []).include? node['fqdn']
 
-secondaries = [ config['secondary_servers'] ].flatten
-
-template '/etc/resolv.conf' do
-  source 'resolv.conf.erb'
-  mode '0644'
-  variables({
-    'nameservers' => [ server_addr ] + secondaries,
-    'search' => config['search']
-  })
-end
+# Select the good set of configuration
+node.run_state['bind-ddns'] = {}
+node.run_state['bind-ddns']['status'] = status
+node.run_state['bind-ddns']['config'] = attrs.merge attrs["#{status}-config"]

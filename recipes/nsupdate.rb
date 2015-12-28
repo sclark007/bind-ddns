@@ -14,7 +14,11 @@
 # limitations under the License.
 #
 
-records = node['bind-ddns']['records']
+# Config initialization
+include_recipe "#{cookbook_name}::init"
+config = node.run_state['bind-ddns']['config']
+
+records = config['records']
 
 records.each do |record|
   resource = bind_ddns "nsupdate #{record['domain']}" do
@@ -22,7 +26,7 @@ records.each do |record|
   end
 
   # Set global server as default
-  global_server = node['bind-ddns']['server']
+  global_server = config['server']
   resource.server global_server unless global_server.nil?
 
   # Get default zone name from tail part of domain (without the head)
@@ -32,7 +36,7 @@ records.each do |record|
   resource.zone zone
 
   # Fetch default key based on zone name
-  keys = node['bind-ddns']['keys'].reject {|k| k['name'] != zone }
+  keys = config['keys'].reject {|k| k['name'] != zone }
   unless keys.empty?
     raise "More than one key with name #{zone}!" if keys.size > 1
     key = keys.first

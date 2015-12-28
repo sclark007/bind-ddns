@@ -14,5 +14,9 @@
 # limitations under the License.
 #
 
+# Config initialization
+include_recipe "#{cookbook_name}::init"
+config = node.run_state['bind-ddns']['config']
+
 # Install bind package
-package node['bind-ddns']['package']
+package config['package']

@@ -14,6 +14,7 @@
 # limitations under the License.
 #
 
+# Installation options
 default['bind-ddns']['package'] = 'bind'
 default['bind-ddns']['package-utils'] = 'bind-utils'
 
@@ -21,6 +22,10 @@ default['bind-ddns']['user'] = 'named'
 default['bind-ddns']['config_dir'] = '/etc'
 default['bind-ddns']['var_dir'] = '/var/named'
 default['bind-ddns']['service_name'] = 'named'
+
+# Specific configuration depending on status (client or server)
+default['bind-ddns']['client-config'] = {}
+default['bind-ddns']['server-config'] = {}
 
 # Set resolv.conf
 default['bind-ddns']['set_resolv_conf'] = false

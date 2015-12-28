@@ -14,5 +14,8 @@
 # limitations under the License.
 #
 
-# By default, you probably want to be only a client
-include_recipe "#{cookbook_name}::client"
+# Initialization
+include_recipe "#{cookbook_name}::init"
+
+# Depending on our status, we call client or server
+include_recipe "#{cookbook_name}::#{node.run_state['bind-ddns']['status']}"
