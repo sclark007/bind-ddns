@@ -74,7 +74,7 @@ Call recipe **client**.
 
 Install **Bind** package.
 
-### package-client
+### package\_client
 
 Install **Bind utils** package.
 

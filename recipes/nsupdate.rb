@@ -32,13 +32,13 @@ records.each do |record|
   # Get default zone name from tail part of domain (without the head)
   zone = record['zone']
   zone = record['domain'].split('.').drop(1).join('.') unless record['zone']
-  zone = zone.gsub /\.$/, ''
+  zone = zone.gsub(/\.$/, '')
   resource.zone zone
 
   # Fetch default key based on zone name
-  keys = config['keys'].reject {|k| k['name'] != zone }
+  keys = config['keys'].reject { |k| k['name'] != zone }
   unless keys.empty?
-    raise "More than one key with name #{zone}!" if keys.size > 1
+    fail "More than one key with name #{zone}!" if keys.size > 1
     key = keys.first
     resource.keyname key['name']
     resource.secret key['secret']

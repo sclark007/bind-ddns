@@ -18,7 +18,7 @@
 include_recipe "#{cookbook_name}::init"
 
 # Install necessary package then apply records
-include_recipe "#{cookbook_name}::package-client"
+include_recipe "#{cookbook_name}::package_client"
 if node.run_state['bind-ddns']['config']['set_resolv_conf']
   include_recipe "#{cookbook_name}::resolvconf"
 end

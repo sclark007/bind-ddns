@@ -21,7 +21,7 @@ config = node.run_state['bind-ddns']['config']
 # Enable/Start service
 service 'named' do
   service_name config['service_name']
-  supports :status => true, :restart => true, :reload => true
-  action [ :enable, :start ]
+  supports status: true, restart: true, reload: true
+  action [:enable, :start]
   subscribes :reload, 'execute[named-checkconf]'
 end

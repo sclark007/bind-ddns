@@ -19,6 +19,4 @@ include_recipe "#{cookbook_name}::init"
 config = node.run_state['bind-ddns']['config']
 
 # Install bind-utils if necessary
-unless config['package-utils'].empty?
-  package config['package-utils']
-end
+package config['package-utils'] unless config['package-utils'].empty?

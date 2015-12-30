@@ -29,7 +29,7 @@ key_files = []
 config['keys'].each do |key|
   key = key.dup
   key['algorithm'] ||= config['default_key_algorithm']
-  filename = "named-#{key['name'].gsub(/\./,'-')}.key"
+  filename = "named-#{key['name'].gsub(/\./, '-')}.key"
 
   template ::File.join(config['config_dir'], filename) do
     source 'key.erb'
@@ -49,7 +49,7 @@ named_conf = ::File.join(config['config_dir'], 'named.conf')
 template named_conf do
   source 'named.conf.erb'
   mode '644'
-  variables({
+  variables(
     'options' => config['options'],
     'channels' => config['channels'],
     'categories' => config['categories'],
@@ -57,39 +57,38 @@ template named_conf do
     'included_files' => config['default_files'].dup +
       config['included_files'] + key_files,
     'config_dir' => config['config_dir']
-  })
+  )
   notifies :run, 'execute[named-checkconf]', :delayed
 end
 
 # Write zone files
 config['zones'].each do |zone|
-
   # Check configuration completeness
   prefix = "#{cookbook_name}::#{recipe_name}: zone #{zone['name']}:"
 
-  [ 'name', 'config' ].each do |field|
-    raise "#{prefix} mandatory field '#{field}' is nil" if zone[field].nil?
+  %w(name config).each do |field|
+    fail "#{prefix} mandatory field '#{field}' is nil" if zone[field].nil?
   end
 
-  [ 'type', 'file' ].each do |field|
+  %w(type file).each do |field|
     if zone['config'][field].nil?
-      raise "#{prefix} mandatory field 'config/#{field}' is nil"
+      fail "#{prefix} mandatory field 'config/#{field}' is nil"
     end
   end
 
   # For a master zone, we need A and NS records
   if zone['config']['type'] == 'master'
-    [ 'ns', 'a' ].each do |field|
-      raise "#{prefix} mandatory field '#{field}' is nil" if zone[field].nil?
+    %w(ns a).each do |field|
+      fail "#{prefix} mandatory field '#{field}' is nil" if zone[field].nil?
     end
 
     # NS entries must have a match in A records
     unless zone['ns'].map { |ns| zone['a'].keys.include? ns }.all?
-      raise "#{prefix} some nameservers defined in 'ns' does not " +
-        "have a corresponding A entry"
+      fail "#{prefix} some nameservers defined in 'ns' does not" \
+        'have a corresponding A entry'
     end
 
-    raise "No nameserver defined for zone #{zone['name']}" if zone['ns'].empty?
+    fail "No nameserver defined for zone #{zone['name']}" if zone['ns'].empty?
   end
 
   filename = zone['config']['file'].gsub(/\'|\"/, '')
@@ -121,7 +120,7 @@ config['zones'].each do |zone|
     owner config['user']
     group config['user']
     mode 0644
-    variables :serial => zone['serial'] || Time.now.to_i
+    variables serial: zone['serial'] || Time.now.to_i
     action :nothing
   end
 
@@ -139,7 +138,7 @@ config['zones'].each do |zone|
     group config['user']
     mode 0644
     variables(
-      lazy {
+      lazy do
         {
           'global_ttl' => zone['global_ttl'] || default['global_ttl'],
           'contact' => zone['contact'] || 'hostmaster',
@@ -151,15 +150,14 @@ config['zones'].each do |zone|
           'negcachettl' => zone['negcachettl'] || default['negcachettl'],
           'extra_records' => zone['extra_records'] || default['extra_records']
         }
-      }
+      end
     )
-    notifies :delete, "file[#{filepath}.jnl]", :immediately if !z_exists
+    notifies :delete, "file[#{filepath}.jnl]", :immediately unless z_exists
     notifies :run, "execute[freeze #{zone['name']}]", :immediately if z_exists
     notifies :create, "template[#{filename}]", :immediately
     notifies :run, "execute[restart #{zone['name']}]", :immediately if z_exists
     notifies :run, 'execute[named-checkconf]', :delayed
   end unless zone['name'] == '"." IN'
-
 end
 
 # Check if the configuration is OK

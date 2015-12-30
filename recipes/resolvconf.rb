@@ -20,15 +20,15 @@ config = node.run_state['bind-ddns']['config']
 
 # If server is a name, we assume it is localhost or an alias
 server = config['server']
-server_addr = !!(server =~ Resolv::IPv4::Regex) ? server : '127.0.0.1'
+server_addr = (server =~ Resolv::IPv4::Regex) ? server : '127.0.0.1'
 
-secondaries = [ config['secondary_servers'] ].flatten
+secondaries = [config['secondary_servers']].flatten
 
 template '/etc/resolv.conf' do
   source 'resolv.conf.erb'
   mode '0644'
-  variables({
-    'nameservers' => [ server_addr ] + secondaries,
+  variables(
+    'nameservers' => [server_addr] + secondaries,
     'search' => config['search']
-  })
+  )
 end
