@@ -18,23 +18,23 @@ actions :add, :delete
 default_action :add
 
 attributes = [
-  [ :uniq, :kind_of => [TrueClass, FalseClass], :default => true ],
+  [:uniq, kind_of: [TrueClass, FalseClass], default: true],
 
-  [ :server, :kind_of => String, :default => nil ],
-  [ :zone, :kind_of => String, :default => nil ],
-  [ :keyname, :kind_of => String, :required => true ],
-  [ :secret, :kind_of => String, :required => true ],
+  [:server, kind_of: String, default: nil],
+  [:zone, kind_of: String, default: nil],
+  [:keyname, kind_of: String, required: true],
+  [:secret, kind_of: String, required: true],
 
-  [ :other, :kind_of => String, :default => nil ],
-  [ :cli_options, :kind_of => String, :default => nil ],
+  [:other, kind_of: String, default: nil],
+  [:cli_options, kind_of: String, default: nil],
 
-  [ :domain, :kind_of => String, :name_attribute => true ],
-  [ :ttl, :kind_of => Integer, :default => 86400 ],
-  [ :dnsclass, :kind_of => String, :default => 'IN' ],
-  [ :type, :kind_of => String, :default => 'A' ],
-  [ :data, :kind_of => String, :default => nil ]
+  [:domain, kind_of: String, name_attribute: true],
+  [:ttl, kind_of: Integer, default: 86_400],
+  [:dnsclass, kind_of: String, default: 'IN'],
+  [:type, kind_of: String, default: 'A'],
+  [:data, kind_of: String, default: nil]
 ]
 
 attributes.each do |attr|
-  attribute *attr
+  attribute(*attr)
 end
