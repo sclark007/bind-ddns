@@ -32,15 +32,13 @@ action :add do
     expected = 0
     expected = 1 if current['present']
     if current['total'] > expected
-      nsupdate(nr.cli_options, nr.server, key, nr.zone, 'del', nr.domain, nil,
-               nil, nr.type, nil, nil)
+      nsupdate(nr, key, 'del', nil)
       current['present'] = false
     end
   end
 
   unless current['present']
-    nsupdate(nr.cli_options, nr.server, key, nr.zone, 'add', nr.domain, nr.ttl,
-             nr.dnsclass, nr.type, data, nr.other)
+    nsupdate(nr, key, 'add', data)
     nr.updated_by_last_action(true)
   end
 end
@@ -57,32 +55,40 @@ action :delete do
   data = nr.uniq ? nil : data
 
   if current['present'] || (nr.uniq && current['total'] > 0)
-    nsupdate(nr.cli_options, nr.server, key, nr.zone, 'del', nr.domain, nil,
-             nil, nr.type, data, nil)
+    nsupdate(nr, key, 'del', data)
     nr.updated_by_last_action(true)
   end
 end
 
 def check_current(domain, ip, server)
-  resolver = Resolv::DNS.new(server.nil? ? nil : {:nameserver => server})
+  resolver = Resolv::DNS.new(server.nil? ? nil : { nameserver: server })
   addresses = resolver.getaddresses(domain).map(&:to_s)
   resolver.close
   { 'total' => addresses.size, 'present' => addresses.include?(ip) }
 end
 
-def nsupdate(opt,server,key,zone,action,domain,ttl,dnsclass,type,data,other)
-  cmd = "nsupdate #{opt}"
-  server = "server #{server}" unless server.nil?
-  zone = "zone #{zone}" unless zone.nil?
-  config = <<-EOS.gsub /^ *$\n/, ''
-    #{server}
+def nsupdate(nr, key, action, data)
+  config = <<-EOS.gsub(/^ *$\n/, '')
+    #{field('server', nr.server)}
     key #{key['keyname']} #{key['secret']}
-    #{zone}
-    #{other}
-    update #{action} #{domain} #{ttl} #{dnsclass} #{type} #{data}
+    #{field('zone', nr.zone)}
+    #{create_update(nr, action, data)}
     send
   EOS
-  execute "cat <<-EOF | #{cmd}
+  execute "cat <<-EOF | nsupdate #{nr.cli_options}
     #{config}EOF
   "
+end
+
+def field(name, value)
+  "#{name} #{value}" unless value.nil?
+end
+
+def create_update(nr, action, data)
+  if action == 'add'
+    "#{nr.other}\n  update " \
+      "#{action} #{nr.domain} #{nr.ttl} #{nr.dnsclass} #{nr.type} #{data}"
+  else
+    "update #{action} #{nr.domain} #{nr.type} #{data}"
+  end
 end

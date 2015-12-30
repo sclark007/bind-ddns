@@ -8,4 +8,4 @@ source_url 'https://gitlab.com/s4m-chef-repositories/bind-ddns'
 issues_url 'https://gitlab.com/s4m-chef-repositories/bind-ddns/issues'
 version '1.4.0'
 
-supports 'centos',  '>= 7.1'
+supports 'centos', '>= 7.1'
