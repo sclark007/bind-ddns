@@ -63,15 +63,21 @@ suites:
       - recipe[bind-ddns::server]
     attributes:
       bind-ddns:
+        servers: [ server-ddns.kitchen ]
         set_resolv_conf: true
         server: localhost
         secondary_servers:
           - "8.8.8.8"
           - "8.8.4.4"
         search: chef.kitchen
-        options:
-          listen-on: "port 53 { localnets; }"
-          allow-query: "{ localnets; }"
+        server-config: # Should be used
+          options:
+            listen-on: "port 53 { localnets; }"
+            allow-query: "{ localnets; }"
+        client-config: # Should not be used
+          options:
+            listen-on: "port 57"
+            allow-query: "{ any; }"
         zones:
           - name: chef.kitchen
             config:

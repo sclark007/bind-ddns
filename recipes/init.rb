@@ -15,7 +15,7 @@
 #
 
 # Shorter name
-attrs = node['bind-ddns']
+attrs = node['bind-ddns'].to_hash
 
 # Detect if current node is a server or a client
 status = 'client'
@@ -24,4 +24,7 @@ status = 'server' if (attrs['servers'] || []).include? node['fqdn']
 # Select the good set of configuration
 node.run_state['bind-ddns'] = {}
 node.run_state['bind-ddns']['status'] = status
-node.run_state['bind-ddns']['config'] = attrs.merge attrs["#{status}-config"]
+node.run_state['bind-ddns']['config'] =
+  attrs.merge attrs["#{status}-config"] do |_, attr, spec|
+    attr.respond_to?(:merge) ? attr.merge(spec) : spec
+  end
