@@ -16,8 +16,8 @@
 
 require 'socket'
 
+# Internal module
 module BindDdns
-
   def hash_resolve_iface(hash)
     result = {}
     hash.each do |key, value|
@@ -31,17 +31,19 @@ module BindDdns
     result = iface # if iface is not an interface, we do nothing
 
     ifaddrs = Socket.getifaddrs
-    ifaces = ifaddrs.map {|ifaddr| ifaddr.name}.uniq
+    ifaces = ifaddrs.map(&:name).uniq
     # check if iface is an interface
     if ifaces.include? iface
-      inets = ifaddrs.select do |ifaddr|
-        ifaddr.name == iface && !ifaddr.addr.nil? && ifaddr.addr.ipv4?
-      end
-      addrs = inets.map {|i| i.addr.ip_address}
-      raise "No or multiple inet addresses for #{iface}" unless addrs.size == 1
+      addrs = ipv4inets(ifaddrs, iface).map { |i| i.addr.ip_address }
+      fail "No or multiple inet addresses for #{iface}" unless addrs.size == 1
       result = addrs.first
     end
     result
   end
 
+  def ipv4inets(ifaddrs, iface)
+    ifaddrs.select do |ifaddr|
+      ifaddr.name == iface && !ifaddr.addr.nil? && ifaddr.addr.ipv4?
+    end
+  end
 end
