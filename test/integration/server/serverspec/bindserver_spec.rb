@@ -27,12 +27,12 @@ end
 
 describe host('ns.chef.kitchen') do
   it { should be_resolvable.by('dns') }
-  its(:ipv4_address) { should eq get_ip_eth0 }
+  its(:ipv4_address) { should eq ip_eth0 }
 end
 
 describe host('server-ddns') do
   it { should be_resolvable.by('dns') }
-  its(:ipv4_address) { should eq get_ip_eth0 }
+  its(:ipv4_address) { should eq ip_eth0 }
 end
 
 describe file('/etc/resolv.conf') do
@@ -67,11 +67,9 @@ describe file('/etc/named-chef-kitchen.key') do
 end
 
 describe file('/var/named/dynamic/db-chef-kitchen.erb') do
-  its(:content) {
-    should contain '@ IN SOA ns.chef.kitchen. hostmaster \('
-  }
+  its(:content) { should contain '@ IN SOA ns.chef.kitchen. hostmaster \(' }
   its(:content) { should contain '  IN NS ns.chef.kitchen.' }
-  its(:content) { should contain "ns.chef.kitchen. IN A #{get_ip_eth0}" }
+  its(:content) { should contain "ns.chef.kitchen. IN A #{ip_eth0}" }
 end
 
 describe command('named-checkconf -z /etc/named.conf') do

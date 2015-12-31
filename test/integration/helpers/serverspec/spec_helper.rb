@@ -20,8 +20,8 @@ set :backend, :exec
 
 require 'socket'
 
-def get_ip_eth0
-  Socket.ip_address_list.select do |addr|
+def ip_eth0
+  Socket.ip_address_list.find do |addr|
     addr.ipv4? && (!addr.ipv4_loopback?)
-  end.first.ip_address
+  end.ip_address
 end
