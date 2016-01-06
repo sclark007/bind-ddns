@@ -60,7 +60,7 @@ suites:
       hostname: server-ddns.chef.kitchen
       instance_name: server-ddns
     run_list:
-      - recipe[bind-ddns::server]
+      - recipe[bind-ddns]
     attributes:
       bind-ddns:
         servers: [ server-ddns.chef.kitchen ]
@@ -101,7 +101,7 @@ suites:
       instance_name: client-ddns
       dns: $(<%= ip_of %> server-ddns)
     run_list:
-      - recipe[bind-ddns::client]
+      - recipe[bind-ddns]
     attributes:
       myid: "13"
       bind-ddns:
