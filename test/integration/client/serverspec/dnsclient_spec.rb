@@ -29,6 +29,11 @@ describe host('client-ddns.chef.kitchen') do
   its(:ipv4_address) { should eq ip_eth0 }
 end
 
+describe host('linux.client-ddns.chef.kitchen') do
+  it { should be_resolvable.by('dns') }
+  its(:ipv4_address) { should eq '10.11.12.13' }
+end
+
 describe host('test-delete.chef.kitchen') do
   it { should_not be_resolvable.by('dns') }
 end

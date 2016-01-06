@@ -21,7 +21,12 @@ config = node.run_state['bind-ddns']['config']
 records = config['records']
 
 records.each do |record|
-  resource = bind_ddns "nsupdate #{record['domain']}" do
+  domain = record['domain']
+  domain = node['fqdn'] if domain.nil?
+  domain = eval "\"#{domain}\"" # rubocop:disable Lint/Eval
+
+  # Create resource
+  resource = bind_ddns "nsupdate #{domain}" do
     action :add
   end
 
@@ -31,7 +36,7 @@ records.each do |record|
 
   # Get default zone name from tail part of domain (without the head)
   zone = record['zone']
-  zone = record['domain'].split('.').drop(1).join('.') unless record['zone']
+  zone = domain.split('.').drop(1).join('.') unless record['zone']
   zone = zone.gsub(/\.$/, '')
   resource.zone zone
 
@@ -48,4 +53,7 @@ records.each do |record|
   record.each do |name, value|
     resource.send(name, value)
   end
+
+  # Override domain
+  resource.domain domain
 end

@@ -57,13 +57,13 @@ suites:
   # Install a ddns server
   - name: server
     driver:
-      hostname: server-ddns.kitchen
+      hostname: server-ddns.chef.kitchen
       instance_name: server-ddns
     run_list:
       - recipe[bind-ddns::server]
     attributes:
       bind-ddns:
-        servers: [ server-ddns.kitchen ]
+        servers: [ server-ddns.chef.kitchen ]
         set_resolv_conf: true
         server: localhost
         secondary_servers:
@@ -91,28 +91,29 @@ suites:
           - name: chef.kitchen
             secret: 9ZDQZxLEBuho4+O0EuGOYA==
         records:
-          - domain: server-ddns.chef.kitchen
-            data: eth0
+          - data: eth0
           - domain: test-delete.chef.kitchen
             data: "1.2.3.4"
 
   - name: client
     driver:
-      hostname: client-ddns.kitchen
+      hostname: client-ddns.chef.kitchen
       instance_name: client-ddns
       dns: $(<%= ip_of %> server-ddns)
     run_list:
       - recipe[bind-ddns::client]
     attributes:
       bind-ddns:
-        servers: [ server-ddns.kitchen ]
+        servers: [ server-ddns.chef.kitchen ]
         keys:
           - name: chef.kitchen
             secret: 9ZDQZxLEBuho4+O0EuGOYA==
         client-config: # Should be used
          records:
-            - domain: client-ddns.chef.kitchen
-              data: eth0
+            - data: eth0
+            - domain: "#{node['os']}.#{node['fqdn']}"
+              data: "10.11.12.13"
+              zone: chef.kitchen
             - domain: test-delete.chef.kitchen
               zone: chef.kitchen.
               keyname: chef.kitchen
