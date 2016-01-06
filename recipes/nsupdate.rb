@@ -21,9 +21,15 @@ config = node.run_state['bind-ddns']['config']
 records = config['records']
 
 records.each do |record|
+  # Eval domain and replace empty one by FQDN
   domain = record['domain']
   domain = node['fqdn'] if domain.nil?
   domain = eval "\"#{domain}\"" # rubocop:disable Lint/Eval
+
+  # Eval data and replace empty one by the IP reported in ohai
+  data = record['data']
+  data = node['ipaddress'] if data.nil? && record['action'] != 'delete'
+  data = eval "\"#{data}\"" # rubocop:disable Lint/Eval
 
   # Create resource
   resource = bind_ddns "nsupdate #{domain}" do
@@ -54,6 +60,7 @@ records.each do |record|
     resource.send(name, value)
   end
 
-  # Override domain
+  # Override domain and data
   resource.domain domain
+  resource.data data
 end
