@@ -22,6 +22,6 @@ require 'socket'
 
 def ip_eth0
   Socket.ip_address_list.find do |addr|
-    addr.ipv4? && (!addr.ipv4_loopback?)
+    addr.ipv4? && !addr.ipv4_loopback?
   end.ip_address
 end

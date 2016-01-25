@@ -29,7 +29,7 @@ key_files = []
 config['keys'].each do |key|
   key = key.dup
   key['algorithm'] ||= config['default_key_algorithm']
-  filename = "named-#{key['name'].gsub(/\./, '-')}.key"
+  filename = "named-#{key['name'].tr('.', '-')}.key"
 
   template ::File.join(config['config_dir'], filename) do
     source 'key.erb'
