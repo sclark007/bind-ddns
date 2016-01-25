@@ -29,7 +29,6 @@ records.each do |record|
   # Eval data and replace empty one by the IP reported in ohai
   data = record['data']
   data = node['ipaddress'] if data.nil? && record['action'] != 'delete'
-  data = eval "\"#{data}\"" # rubocop:disable Lint/Eval
 
   # Create resource
   resource = bind_ddns "nsupdate #{domain}" do

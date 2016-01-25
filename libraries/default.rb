@@ -26,9 +26,10 @@ module BindDdns
     result
   end
 
-  # iface may be an interface name, in the case we resolve its inet address
+  # iface may be an interface name or an attribute
   def resolve_iface(iface)
-    result = iface # if iface is not an interface, we do nothing
+    # Eval input !unsafe!, so we can use attributes (like node['ipaddress'])
+    iface = eval "\"#{iface}\"" # rubocop:disable Lint/Eval
 
     ifaddrs = Socket.getifaddrs
     ifaces = ifaddrs.map(&:name).uniq
@@ -36,9 +37,10 @@ module BindDdns
     if ifaces.include? iface
       addrs = ipv4inets(ifaddrs, iface).map { |i| i.addr.ip_address }
       fail "No or multiple inet addresses for #{iface}" unless addrs.size == 1
-      result = addrs.first
+      addrs.first
+    else
+      iface
     end
-    result
   end
 
   def ipv4inets(ifaddrs, iface)

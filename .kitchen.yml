@@ -73,7 +73,7 @@ suites:
               allow-update: "{ key chef.kitchen; }"
             ns: [ ns.chef.kitchen. ]
             a:
-              ns.chef.kitchen.: eth0
+              ns.chef.kitchen.: "#{node['network']['default_interface']}"
         keys:
           - name: chef.kitchen
             secret: 9ZDQZxLEBuho4+O0EuGOYA==
