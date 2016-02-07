@@ -57,7 +57,7 @@ module Kitchen
       end
 
       def run_create(instances, services, helpers)
-        run_action_official(:create, helper)
+        run_action_official(:create, helpers)
         run_action_official(:create, services)
       end
 

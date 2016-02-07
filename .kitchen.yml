@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Sam4Mobile
+# Copyright (c) 2015-2016 Sam4Mobile
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,15 +19,14 @@
 #   <% require "#{File.dirname(__FILE__)}/test/kitchen_command.rb" %>
 # - nodes generation from suites definition
 #   <% require "#{File.dirname(__FILE__)}/test/kitchen_sandbox.rb" %>
-# - improve login and destroy with docker driver (depend on systemd)
-#   install pipework and create a second interface
-#   <% require "#{File.dirname(__FILE__)}/test/kitchen_docker.rb" %>
 # - Alias to have shorter lines
 #   <% ip_of = "docker inspect --format '{{.NetworkSettings.IPAddress}}'" %>
 
 driver:
-  name: docker
-  use_sudo: false
+  name: docker_cli
+
+transport:
+  name: docker_cli
 
 provisioner:
   name: chef_zero
@@ -37,28 +36,16 @@ provisioner:
 platforms:
   - name: centos-7
     driver_config:
-      # The two following lines are needed by systemd to access cgroups
+      image: sbernard/centos-systemd-kitchen
       volume: /sys/fs/cgroup:/sys/fs/cgroup:ro
-      privileged: true
-      run_command: /usr/sbin/init # Start systemd as root process
-      # general provisionning for kitchen
-      require_chef_omnibus: false
-      provision_command:
-        - >
-          curl -L https://www.getchef.com/chef/install.sh | bash &&
-          GEM_HOME=/tmp/verifier/gems GEM_PATH=/tmp/verifier/gems
-          GEM_CACHE=/tmp/verifier/gems/cache
-          /opt/chef/embedded/bin/gem install
-          thor busser busser-serverspec serverspec bundler &&
-          chown -R kitchen:kitchen /tmp/verifier &&
-          yum install -y iproute
+      command: /usr/lib/systemd/systemd
 
 suites:
   # Install a ddns server
   - name: server
     driver:
       hostname: server-ddns.chef.kitchen
-      instance_name: server-ddns
+      container_name: server-ddns
     run_list:
       - recipe[bind-ddns]
     attributes:
@@ -98,7 +85,7 @@ suites:
   - name: client
     driver:
       hostname: client-ddns.chef.kitchen
-      instance_name: client-ddns
+      container_name: client-ddns
       dns: $(<%= ip_of %> server-ddns)
     run_list:
       - recipe[bind-ddns]
