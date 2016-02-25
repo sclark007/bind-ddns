@@ -35,7 +35,7 @@ module BindDdns
     # check if iface is an interface
     if ifaces.include? iface
       addrs = ipv4inets(ifaddrs, iface).map { |i| i.addr.ip_address }
-      fail "No or multiple inet addresses for #{iface}" unless addrs.size == 1
+      raise "No or multiple inet addresses for #{iface}" unless addrs.size == 1
       result = addrs.first
     end
     result

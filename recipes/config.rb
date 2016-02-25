@@ -67,28 +67,28 @@ config['zones'].each do |zone|
   prefix = "#{cookbook_name}::#{recipe_name}: zone #{zone['name']}:"
 
   %w(name config).each do |field|
-    fail "#{prefix} mandatory field '#{field}' is nil" if zone[field].nil?
+    raise "#{prefix} mandatory field '#{field}' is nil" if zone[field].nil?
   end
 
   %w(type file).each do |field|
     if zone['config'][field].nil?
-      fail "#{prefix} mandatory field 'config/#{field}' is nil"
+      raise "#{prefix} mandatory field 'config/#{field}' is nil"
     end
   end
 
   # For a master zone, we need A and NS records
   if zone['config']['type'] == 'master'
     %w(ns a).each do |field|
-      fail "#{prefix} mandatory field '#{field}' is nil" if zone[field].nil?
+      raise "#{prefix} mandatory field '#{field}' is nil" if zone[field].nil?
     end
 
     # NS entries must have a match in A records
     unless zone['ns'].map { |ns| zone['a'].keys.include? ns }.all?
-      fail "#{prefix} some nameservers defined in 'ns' does not" \
+      raise "#{prefix} some nameservers defined in 'ns' does not" \
         'have a corresponding A entry'
     end
 
-    fail "No nameserver defined for zone #{zone['name']}" if zone['ns'].empty?
+    raise "No nameserver defined for zone #{zone['name']}" if zone['ns'].empty?
   end
 
   filename = zone['config']['file'].gsub(/\'|\"/, '')

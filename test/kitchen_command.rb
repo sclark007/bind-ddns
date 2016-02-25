@@ -22,51 +22,44 @@ require 'kitchen/command'
 
 module Kitchen
   module Command
-
     module RunAction
-      alias_method :run_action_official, :run_action
+      alias run_action_official run_action
 
       def run_action(action, instances, *args)
-        # Define suites as global so we can use them to generates nodes
-        # in CommonSandbox
-        $suites = @config.send(:data).suite_data
-
         # Extract helper instance(s) to be able to launch it first
         # so it is ready for other containers
-        helpers = instances.select do |i|
-          (i.suite.name.include? "server")
-        end
+        helpers = instances.select { |i| (i.suite.name.include? 'server') }
         services = instances - helpers
 
-        case action
-        when :destroy
-          run_action_official(action, instances, *args)
-        when :test
-          run_action_official(:destroy, instances)
-          run_converge(instances, services, helpers)
-          run_action_official(:verify, instances)
-          run_action_official(:destroy, instances) if args.first == :passing
-        when :create
-          run_create(instances, services, helpers)
-        when :converge
-          run_converge(instances, services, helpers)
+        if %i(destroy test create converge).include? action
+          send("run_#{action}".to_sym,
+               instances, services, helpers, args.first)
         else
           run_converge(instances, services, helpers) if action == :verify
           run_action_official(action, instances, *args) if action != :create
         end
       end
 
-      def run_create(instances, services, helpers)
+      def run_destroy(instances, _services, _helpers, _type = nil)
+        run_action_official(:destroy, instances)
+      end
+
+      def run_test(instances, services, helpers, type = nil)
+        run_action_official(:destroy, instances)
+        run_converge(instances, services, helpers)
+        run_action_official(:verify, instances)
+        run_action_official(:destroy, instances) if type == :passing
+      end
+
+      def run_create(_instances, services, helpers, _type = nil)
         run_action_official(:create, helpers)
         run_action_official(:create, services)
       end
 
-      def run_converge(instances, services, helpers)
+      def run_converge(_instances, services, helpers, _type = nil)
         run_action_official(:converge, helpers)
         run_action_official(:converge, services)
       end
-
     end
-
   end
 end

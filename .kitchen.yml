@@ -17,8 +17,6 @@
 # Customize Kitchen with some monkey patching:
 # - Suites scheduler
 #   <% require "#{File.dirname(__FILE__)}/test/kitchen_command.rb" %>
-# - nodes generation from suites definition
-#   <% require "#{File.dirname(__FILE__)}/test/kitchen_sandbox.rb" %>
 # - Alias to have shorter lines
 #   <% ip_of = "docker inspect --format '{{.NetworkSettings.IPAddress}}'" %>
 

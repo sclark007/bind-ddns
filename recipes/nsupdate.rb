@@ -47,7 +47,7 @@ records.each do |record|
   # Fetch default key based on zone name
   keys = config['keys'].reject { |k| k['name'] != zone }
   unless keys.empty?
-    fail "More than one key with name #{zone}!" if keys.size > 1
+    raise "More than one key with name #{zone}!" if keys.size > 1
     key = keys.first
     resource.keyname key['name']
     resource.secret key['secret']
