@@ -21,12 +21,11 @@ config = node.run_state['bind-ddns']['config']
 records = config['records']
 
 records.each do |record|
-  # Eval domain and replace empty one by FQDN
+  # Replace empty domain by FQDN
   domain = record['domain']
   domain = node['fqdn'] if domain.nil?
-  domain = eval "\"#{domain}\"" # rubocop:disable Lint/Eval
 
-  # Eval data and replace empty one by the IP reported in ohai
+  # Replace empty data by the IP reported in ohai
   data = record['data']
   data = node['ipaddress'] if data.nil? && record['action'] != 'delete'
 

@@ -73,7 +73,7 @@ suites:
               allow-update: "{ key chef.kitchen; }"
             ns: [ ns.chef.kitchen. ]
             a:
-              ns.chef.kitchen.: "#{node['network']['default_interface']}"
+              ns.chef.kitchen.: eth0
         keys:
           - name: chef.kitchen
             secret: 9ZDQZxLEBuho4+O0EuGOYA==
@@ -90,7 +90,6 @@ suites:
     run_list:
       - recipe[bind-ddns]
     attributes:
-      myid: "13"
       bind-ddns:
         servers: [ server-ddns.chef.kitchen ]
         keys:
@@ -99,8 +98,8 @@ suites:
         client-config: # Should be used
          records:
             - zone: chef.kitchen
-            - domain: "#{node['os']}.#{node['fqdn']}"
-              data: "#{'10.11.12.' + node['myid']}"
+            - domain: "linux.client-ddns.chef.kitchen"
+              data: "10.11.12.13"
               zone: chef.kitchen
             - domain: test-delete.chef.kitchen
               zone: chef.kitchen.
