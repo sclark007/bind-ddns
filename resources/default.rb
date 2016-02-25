@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2015 Sam4Mobile
+# Copyright (c) 2015-2016 Sam4Mobile
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,20 +18,32 @@ actions :add, :delete
 default_action :add
 
 attributes = [
+  # If the defined domain must have only one entry (remove other if true)
   [:uniq, kind_of: [TrueClass, FalseClass], default: true],
 
+  # DNS server, authoritative on the zone
   [:server, kind_of: String, default: nil],
+  # DNS Zone to add the entry
   [:zone, kind_of: String, default: nil],
+  # Name of DDNS Key
   [:keyname, kind_of: String, required: true],
+  # Secret of DDNS Key
   [:secret, kind_of: String, required: true],
 
+  # Whatever that could have been forgotten
   [:other, kind_of: String, default: nil],
+  # Options for nsupdate command
   [:cli_options, kind_of: String, default: nil],
 
+  # Domain of the entry
   [:domain, kind_of: String, name_attribute: true],
+  # TTL of the entry
   [:ttl, kind_of: Integer, default: 86_400],
+  # DNS Class
   [:dnsclass, kind_of: String, default: 'IN'],
+  # DNS Type
   [:type, kind_of: String, default: 'A'],
+  # IPV4 (A)/ IPV6 (AAAA) / Name (CNAME), etc.
   [:data, kind_of: String, default: nil]
 ]
 

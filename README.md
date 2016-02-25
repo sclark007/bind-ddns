@@ -63,12 +63,35 @@ this cookbook behavior.
 Note: for fields needing an IP address, it is possible to set an interface
 name, which will be resolved to its first non-local address.
 
+### Specific configuration (client or server)
+
+To allow clients and servers to share a same role, it is possible to define
+specific configuration keys applicable to one of the status (client or server).
+
+Specific configurations can be any of the attributes defined in
+[attributes/default.rb](attributes/default.rb) but in either "client-config"
+or "server-config" sub-tree.
+
+A node is declared as server if its FQDN is included in attribute
+"\['bind-ddns'\]\['servers'\]" defined as an array. Else, it is considered
+as a client.
+
 Recipes
 -------
 
 ### default
 
-Call recipe **client**.
+Call **init** and then, following the node status, call **client** or
+**server** recipe.
+
+### init
+
+Determine if the current machine is a server or a client. Write the result
+in "run\_state\['bind-ddns'\]\['status'\]". Then merge default and specific
+(client or server) configurations and store the result in
+"run\_state\['bind-ddns'\]\['config'\]".
+
+Note: **init** is included in all recipes.
 
 ### package
 
@@ -92,6 +115,11 @@ Enable and start *named* service, subscribes on *named-checkconf* resource.
 Call **bind-ddns** default provider (which call **nsupdate** command) based on
 attribute `records`. See [.kitchen.yml](.kitchen.yml) for more information.
 
+Replace some missing configuration attributes:
+- domain (name attribute) by the FQDN
+- data by the ip defined in "node[:ipaddress]"
+- zone by the tail part of the domain
+
 ### resolvconf
 
 Set *resolv.conf* using `server` attribute.
@@ -110,18 +138,20 @@ Resources/Providers
 
 ### default
 
-Add or remove a DNS record using **nsupdate**:
+Add, update or remove a DNS record using **nsupdate**. Read the
+[resources/default.rb](resource file) for more details.
 
 Simple example:
 ```ruby
 bind_ddns 'test.foo' do
-  server ns.foo
-  keyname foo
-  secret XXXX
+  server 'ns.foo'
+  data "10.11.12.13"
+  keyname 'foo'
+  secret 'XXXX'
 end
 ```
 
-Add action `:delete` to delete an entry.
+Use action `:delete` to delete an entry (default is :add).
 
 Changelog
 ---------
@@ -140,7 +170,7 @@ License and Author
 - Author:: Samuel Bernard (<samuel.bernard@s4m.io>)
 
 ```text
-Copyright:: 2015, Sam4Mobile
+Copyright:: 2015-2016, Sam4Mobile
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
