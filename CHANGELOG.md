@@ -5,6 +5,7 @@ Changelog
 -----
 
 Main:
+
 - Can use specific options for clients or servers, to allow clients and
   servers to share the same role
   + Add an init recipe which initialize the configuration correctly
@@ -14,20 +15,21 @@ Main:
   + the servers should be defined with 'servers' key
   + backward compatibility is not broken
 
-- Switch to docker_cli, use prepared docker image
-  + Switch kitchen driver from docker to docker_cli
+- Switch to docker\_cli, use prepared docker image
+  + Switch kitchen driver from docker to docker\_cli
   + Use sbernard/centos-systemd-kitchen image instead of bare centos
   + Remove privileged mode :)
   + Remove some now useless monkey patching
-  + Fix a typo in kitchen_command, fixing kitchen create command
+  + Fix a typo in kitchen\_command, fixing kitchen create command
 
 Misc:
+
 - Fix default options not merged with user attributes
 - Improve documentation, explain resource attributes and specific
   configurations
 - Better tests, to test specific option behavior
 - Fix all rubocop offenses
-  + In particular, package-client recipe is renamed to package_client
+  + In particular, package-client recipe is renamed to package\_client
 
 1.3.1
 -----
