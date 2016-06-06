@@ -76,7 +76,7 @@ describe command('named-checkconf -z /etc/named.conf') do
   its(:exit_status) { should eq 0 }
 end
 
-describe command(
-  'named-checkzone chef.kitchen /var/named/dynamic/db-chef-kitchen') do
+cmd = 'named-checkzone chef.kitchen /var/named/dynamic/db-chef-kitchen'
+describe command(cmd) do
   its(:exit_status) { should eq 0 }
 end
