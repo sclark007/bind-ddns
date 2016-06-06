@@ -37,6 +37,7 @@ platforms:
       image: sbernard/centos-systemd-kitchen
       volume: /sys/fs/cgroup:/sys/fs/cgroup:ro
       command: /usr/lib/systemd/systemd
+      skip_preparation: true
 
 suites:
   # Install a ddns server
