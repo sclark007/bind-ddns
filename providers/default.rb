@@ -55,7 +55,7 @@ action :delete do
   data = nr.uniq ? nil : data
 
   if current['present'] || (nr.uniq && current['total'] > 0)
-    nsupdate(nr, key, 'del', data)
+    nsupdate(nr, key, 'delete', data)
     nr.updated_by_last_action(true)
   end
 end
