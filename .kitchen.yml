@@ -50,6 +50,7 @@ suites:
       - recipe[bind-ddns]
     attributes:
       bind-ddns:
+        package_retries: 1
         servers: [ server-ddns.chef.kitchen ]
         set_resolv_conf: true
         server: localhost
@@ -91,6 +92,7 @@ suites:
       - recipe[bind-ddns]
     attributes:
       bind-ddns:
+        package_retries: 1
         servers: [ server-ddns.chef.kitchen ]
         keys:
           - name: chef.kitchen

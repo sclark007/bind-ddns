@@ -19,4 +19,6 @@ include_recipe "#{cookbook_name}::init"
 config = node.run_state['bind-ddns']['config']
 
 # Install bind package
-package config['package']
+package config['package'] do
+  retries node['bind-ddns']['package_retries']
+end

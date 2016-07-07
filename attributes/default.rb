@@ -129,3 +129,7 @@ default['bind-ddns']['default_files'] = [
 ]
 
 default['bind-ddns']['included_files'] = []
+
+# Configure retries for the package resources, default = global default (0)
+# (mostly used for test purpose)
+default['bind-ddns']['package_retries'] = nil
