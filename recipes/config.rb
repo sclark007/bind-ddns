@@ -35,7 +35,7 @@ config['keys'].each do |key|
     source 'key.erb'
     owner config['user']
     group config['user']
-    mode 0644
+    mode '0644'
     variables 'key' => key
     notifies :run, 'execute[named-checkconf]', :delayed
   end
@@ -48,7 +48,7 @@ named_conf = ::File.join(config['config_dir'], 'named.conf')
 
 template named_conf do
   source 'named.conf.erb'
-  mode '644'
+  mode '0644'
   variables(
     'options' => config['options'],
     'channels' => config['channels'],
@@ -119,7 +119,7 @@ config['zones'].each do |zone|
     local true
     owner config['user']
     group config['user']
-    mode 0644
+    mode '0644'
     variables serial: zone['serial'] || Time.now.to_i
     action :nothing
   end
@@ -136,7 +136,7 @@ config['zones'].each do |zone|
     source 'zone.erb'
     owner config['user']
     group config['user']
-    mode 0644
+    mode '0644'
     variables(
       lazy do
         {
