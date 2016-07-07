@@ -38,6 +38,7 @@ platforms:
       volume: /sys/fs/cgroup:/sys/fs/cgroup:ro
       command: /usr/lib/systemd/systemd
       skip_preparation: true
+      security_opt: seccomp=unconfined
 
 suites:
   # Install a ddns server
@@ -95,7 +96,7 @@ suites:
           - name: chef.kitchen
             secret: 9ZDQZxLEBuho4+O0EuGOYA==
         client-config: # Should be used
-         records:
+          records:
             - zone: chef.kitchen
             - domain: "linux.client-ddns.chef.kitchen"
               data: "10.11.12.13"
