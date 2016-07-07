@@ -62,6 +62,7 @@ suites:
           options:
             listen-on: "port 53 { localnets; }"
             allow-query: "{ localnets; }"
+            forwarders: "{ 8.8.8.8; 8.8.4.4; }"
         client-config: # Should not be used
           options:
             listen-on: "port 57"
