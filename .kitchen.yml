@@ -19,6 +19,9 @@
 #   <% require "#{File.dirname(__FILE__)}/test/kitchen_command.rb" %>
 # - Alias to have shorter lines
 #   <% ip_of = "docker inspect --format '{{.NetworkSettings.IPAddress}}'" %>
+#   <% grep = "grep '^nameserver' /etc/resolv.conf | grep -v 127.0.0.1" %>
+#   <% nameservers = `#{grep} | cut -d" " -f2`.lines.map(&:chomp) %>
+#   <% forwarders = "{ #{nameservers.map { |n| "#{n};" }.join(' ')} }"%>
 
 driver:
   name: docker_cli
@@ -54,15 +57,13 @@ suites:
         servers: [ server-ddns.chef.kitchen ]
         set_resolv_conf: true
         server: localhost
-        secondary_servers:
-          - "8.8.8.8"
-          - "8.8.4.4"
+        secondary_servers: <%= nameservers %>
         search: chef.kitchen
         server-config: # Should be used
           options:
             listen-on: "port 53 { localnets; }"
             allow-query: "{ localnets; }"
-            forwarders: "{ 8.8.8.8; 8.8.4.4; }"
+            forwarders: "<%= forwarders %>"
         client-config: # Should not be used
           options:
             listen-on: "port 57"

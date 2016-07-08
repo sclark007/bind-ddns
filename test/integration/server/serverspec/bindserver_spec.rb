@@ -36,15 +36,17 @@ describe host('server-ddns') do
 end
 
 describe file('/etc/resolv.conf') do
-  its(:content) { should eq <<-eos.gsub(/^ {4}/, '') }
+  its(:content) { should contain <<-eos.gsub(/^ {4}/, '') }
     # Produced by Chef -- changes will be overwritten
 
     search chef.kitchen
     nameserver 127.0.0.1
-    nameserver 8.8.8.8
-    nameserver 8.8.4.4
   eos
 end
+
+grep = "grep '^nameserver' /etc/resolv.conf | grep -v 127.0.0.1"
+nameservers = `#{grep} | cut -d" " -f2`.lines.map(&:chomp)
+forwarders = "{ #{nameservers.map { |n| "#{n};" }.join(' ')} }"
 
 describe file('/etc/named.conf') do
   its(:content) { should contain 'listen-on port 53 { localnets; };' }
@@ -53,6 +55,7 @@ describe file('/etc/named.conf') do
   its(:content) { should contain 'zone chef.kitchen {' }
   its(:content) { should contain 'file "dynamic/db-chef-kitchen";' }
   its(:content) { should contain 'include "/etc/named-chef-kitchen.key";' }
+  its(:content) { should contain "forwarders #{forwarders}" }
 end
 
 describe file('/etc/named-chef-kitchen.key') do
