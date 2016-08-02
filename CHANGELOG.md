@@ -1,6 +1,30 @@
 Changelog
 =========
 
+1.5.0
+-----
+
+Main:
+
+- Fix provider: use nsupdate delete instead of del
+  'delete' is valid on all version whereas 'del' is only valid since 9.9,
+  make it compatible Centos 6
+
+Tests:
+
+- Use Continuous Integration with gitlab-ci, use templated config
+- Set skip\_preparation to true for kitchen-docker\_cli
+- Set seccomp to unconfined for docker run
+- Add option to retry package installation
+- Set forwarders for tests
+- Use nameservers from host to populate test config
+
+Misc:
+
+- Fix rubocop issue in bindserver\_spec.rb
+- Fix rubocop offense on file mode
+- Write changelog in markdown
+
 1.4.0
 -----
 
