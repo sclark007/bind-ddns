@@ -69,7 +69,7 @@ end
 
 def nsupdate(nr, key, action, data)
   config = <<-EOS.gsub(/^ *$\n/, '')
-    #{field('server', nr.server)}
+    #{field('server', nr.server == 'localhost' ? '127.0.0.1' : nr.server)}
     key #{key['keyname']} #{key['secret']}
     #{field('zone', nr.zone)}
     #{create_update(nr, action, data)}

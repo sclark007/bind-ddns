@@ -20,7 +20,7 @@ config = node.run_state['bind-ddns']['config']
 
 # If server is a name, we assume it is localhost or an alias
 server = config['server']
-server_addr = (server =~ Resolv::IPv4::Regex) ? server : '127.0.0.1'
+server_addr = server =~ Resolv::IPv4::Regex ? server : '127.0.0.1'
 
 secondaries = [config['secondary_servers']].flatten
 
