@@ -20,62 +20,67 @@
 use_inline_resources
 
 action :add do
-  nr = new_resource
-  key = {
-    'keyname' => nr.keyname,
-    'secret' => nr.secret
-  }
-  data = resolve_iface nr.data
-  current = check_current(nr.domain, data, nr.server)
+  nr = new_resource.to_hash
+  nr[:data] = resolve_iface(nr[:data])
+  current = check_current(nr[:domain], nr[:server])
 
-  if nr.uniq
-    expected = 0
-    expected = 1 if current['present']
-    if current['total'] > expected
-      nsupdate(nr, key, 'del', nil)
-      current['present'] = false
+  if nr[:uniq]
+    different = current.keep_if do |r|
+      r[:type] == nr[:type] && (r[:data] != nr[:data] || r[:ttl] != nr[:ttl])
     end
+    different.each { |r| nsupdate(nr.merge(r), 'del', r[:data]) }
   end
 
-  unless current['present']
-    nsupdate(nr, key, 'add', data)
-    nr.updated_by_last_action(true)
+  same = current.keep_if do |r|
+    r[:type] == nr[:type] && r[:data] == nr[:data] && r[:ttl] == nr[:ttl]
+  end
+  if same.empty?
+    nsupdate(nr, 'add', nr[:data])
+    new_resource.updated_by_last_action(true)
   end
 end
 
 action :delete do
-  nr = new_resource
-  key = {
-    'keyname' => nr.keyname,
-    'secret' => nr.secret
-  }
-  data = resolve_iface nr.data
-  current = check_current(nr.domain, data, nr.server)
+  nr = new_resource.to_hash
+  nr[:data] = resolve_iface(nr[:data])
+  current = check_current(nr[:domain], nr[:server])
 
-  data = nr.uniq ? nil : data
-
-  if current['present'] || (nr.uniq && current['total'] > 0)
-    nsupdate(nr, key, 'delete', data)
-    nr.updated_by_last_action(true)
+  existing = current.keep_if { |r| r[:type] == nr[:type] }
+  return if existing.empty?
+  if nr[:uniq]
+    nsupdate(nr, 'delete', nil)
+    new_resource.updated_by_last_action(true)
+  else
+    erase = existing.keep_if do |r|
+      r[:data] == nr[:data] && r[:ttl] == nr[:ttl]
+    end
+    erase.each do |r|
+      nsupdate(nr.merge(r), 'delete', data)
+      new_resource.updated_by_last_action(true)
+    end
   end
 end
 
-def check_current(domain, ip, server)
-  resolver = Resolv::DNS.new(server.nil? ? nil : { nameserver: server })
-  addresses = resolver.getaddresses(domain).map(&:to_s)
-  resolver.close
-  { 'total' => addresses.size, 'present' => addresses.include?(ip) }
+def check_current(domain, server = nil)
+  server = server.nil? ? '' : "@#{server}"
+  resources = `dig +noall +answer #{server} #{domain}`.lines.map(&:strip)
+  resources.map do |resource|
+    hash = {}
+    hash[:domain], hash[:ttl], hash[:dnsclass], hash[:type], hash[:data] =
+      resource.split(' ')
+    hash
+  end
 end
 
-def nsupdate(nr, key, action, data)
+def nsupdate(nr, action, data)
   config = <<-EOS.gsub(/^ *$\n/, '')
-    #{field('server', nr.server == 'localhost' ? '127.0.0.1' : nr.server)}
-    key #{key['keyname']} #{key['secret']}
-    #{field('zone', nr.zone)}
+    #{field('server', nr[:server] == 'localhost' ? '127.0.0.1' : nr[:server])}
+    key #{nr[:keyname]} #{nr[:secret]}
+    #{field('zone', nr[:zone])}
     #{create_update(nr, action, data)}
     send
   EOS
-  execute "cat <<-EOF | nsupdate #{nr.cli_options}
+  execute "cat <<-EOF | nsupdate #{nr[:cli_options]}
     #{config}EOF
   "
 end
@@ -86,9 +91,9 @@ end
 
 def create_update(nr, action, data)
   if action == 'add'
-    "#{nr.other}\n  update " \
-      "#{action} #{nr.domain} #{nr.ttl} #{nr.dnsclass} #{nr.type} #{data}"
+    "#{nr[:other]}\n  update #{action} " \
+      "#{nr[:domain]} #{nr[:ttl]} #{nr[:dnsclass]} #{nr[:type]} #{data}"
   else
-    "update #{action} #{nr.domain} #{nr.type} #{data}"
+    "update #{action} #{nr[:domain]} #{nr[:type]} #{data}"
   end
 end

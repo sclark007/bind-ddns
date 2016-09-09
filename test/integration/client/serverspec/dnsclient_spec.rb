@@ -37,3 +37,8 @@ end
 describe host('test-delete.chef.kitchen') do
   it { should_not be_resolvable.by('dns') }
 end
+
+describe host('testcname.chef.kitchen') do
+  it { should be_resolvable.by('dns') }
+  its(:ipv4_address) { should eq ip_eth0 }
+end

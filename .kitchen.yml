@@ -102,7 +102,7 @@ suites:
         client-config: # Should be used
           records:
             - zone: chef.kitchen
-            - domain: "linux.client-ddns.chef.kitchen"
+            - domain: 'linux.client-ddns.chef.kitchen'
               data: "10.11.12.13"
               zone: chef.kitchen
             - domain: test-delete.chef.kitchen
@@ -110,6 +110,15 @@ suites:
               keyname: chef.kitchen
               secret: 9ZDQZxLEBuho4+O0EuGOYA==
               action: delete
+            - zone: chef.kitchen
+              domain: 'testcname.chef.kitchen'
+              data: 'linux.client-ddns.chef.kitchen'
+              type: CNAME
+            - zone: chef.kitchen
+              domain: 'testcname.chef.kitchen'
+              data: 'client-ddns.chef.kitchen'
+              type: CNAME
+              uniq: true
         server-config: # Should not be used
           set_resolv_conf: true
           server: localhost
