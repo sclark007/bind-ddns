@@ -20,9 +20,11 @@ require 'socket'
 module BindDdns
   def hash_resolve_iface(hash)
     result = {}
-    hash.each do |key, value|
-      result[resolve_iface(key)] = resolve_iface(value)
-    end unless hash.nil?
+    unless hash.nil?
+      hash.each do |key, value|
+        result[resolve_iface(key)] = resolve_iface(value)
+      end
+    end
     result
   end
 

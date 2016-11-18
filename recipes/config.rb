@@ -62,7 +62,7 @@ template named_conf do
 end
 
 # Write zone files
-config['zones'].each do |zone|
+config['zones'].each do |zone| # rubocop:disable Metrics/BlockLength
   # Check configuration completeness
   prefix = "#{cookbook_name}::#{recipe_name}: zone #{zone['name']}:"
 
@@ -132,6 +132,8 @@ config['zones'].each do |zone|
   default = config['zones_default']
 
   # Create a template with everything except the serial
+  next if zone['name'] == '"." IN'
+
   template "#{filepath}.erb" do
     source 'zone.erb'
     owner config['user']
@@ -155,9 +157,10 @@ config['zones'].each do |zone|
     notifies :delete, "file[#{filepath}.jnl]", :immediately unless z_exists
     notifies :run, "execute[freeze #{zone['name']}]", :immediately if z_exists
     notifies :create, "template[#{filename}]", :immediately
+
     notifies :run, "execute[restart #{zone['name']}]", :immediately if z_exists
     notifies :run, 'execute[named-checkconf]', :delayed
-  end unless zone['name'] == '"." IN'
+  end
 end
 
 # Check if the configuration is OK

@@ -19,6 +19,8 @@ include_recipe "#{cookbook_name}::init"
 config = node.run_state['bind-ddns']['config']
 
 # Install bind-utils if necessary
-package config['package-utils'] do
-  retries node['bind-ddns']['package_retries']
-end unless config['package-utils'].empty?
+unless config['package-utils'].empty?
+  package config['package-utils'] do
+    retries node['bind-ddns']['package_retries']
+  end
+end
