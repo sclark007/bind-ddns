@@ -1,9 +1,9 @@
-# Template chef 20160615
+# Template chef 20160914
 image: sbernard/arch-kitchen-docker
 
 foodcritic:
   script:
-    - foodcritic .
+    - foodcritic -f any .
 
 rubocop:
   script:
@@ -25,13 +25,6 @@ kitchen:
   tags:
     - docker
   script:
-    - >
-      set +o pipefail;
-      containers=$(kitchen diagnose | grep container_name | awk '{print $2}');
-      for container in $containers; do
-        docker rm --force $container 2> /dev/null | true
-      done
-    - rm -rf .kitchen
     - >
       images=$(kitchen diagnose | grep image | cut -d':' -f2);
       for image in $images; do
