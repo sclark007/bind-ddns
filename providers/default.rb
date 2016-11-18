@@ -63,7 +63,9 @@ end
 
 def check_current(domain, server = nil)
   server = server.nil? ? '' : "@#{server}"
-  resources = `dig +noall +answer #{server} #{domain}`.lines.map(&:strip)
+  dig = Mixlib::ShellOut.new("dig +noall +answer #{server} #{domain}")
+  dig.run_command
+  resources = dig.stdout.lines.map(&:strip)
   resources.map do |resource|
     hash = {}
     hash[:domain], hash[:ttl], hash[:dnsclass], hash[:type], hash[:data] =
