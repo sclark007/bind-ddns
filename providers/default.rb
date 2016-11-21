@@ -25,13 +25,13 @@ action :add do
   current = check_current(nr[:domain], nr[:server])
 
   if nr[:uniq]
-    different = current.keep_if do |r|
+    different = current.select do |r|
       r[:type] == nr[:type] && (r[:data] != nr[:data] || r[:ttl] != nr[:ttl])
     end
     different.each { |r| nsupdate(nr.merge(r), 'del', r[:data]) }
   end
 
-  same = current.keep_if do |r|
+  same = current.select do |r|
     r[:type] == nr[:type] && r[:data] == nr[:data] && r[:ttl] == nr[:ttl]
   end
   if same.empty?
@@ -45,13 +45,13 @@ action :delete do
   nr[:data] = resolve_iface(nr[:data])
   current = check_current(nr[:domain], nr[:server])
 
-  existing = current.keep_if { |r| r[:type] == nr[:type] }
+  existing = current.select { |r| r[:type] == nr[:type] }
   return if existing.empty?
   if nr[:uniq]
     nsupdate(nr, 'delete', nil)
     new_resource.updated_by_last_action(true)
   else
-    erase = existing.keep_if do |r|
+    erase = existing.select do |r|
       r[:data] == nr[:data] && r[:ttl] == nr[:ttl]
     end
     erase.each do |r|
@@ -65,11 +65,11 @@ def check_current(domain, server = nil)
   server = server.nil? ? '' : "@#{server}"
   dig = Mixlib::ShellOut.new("dig +noall +answer #{server} #{domain}")
   dig.run_command
-  resources = dig.stdout.lines.map(&:strip)
-  resources.map do |resource|
+  dig.stdout.lines.map(&:strip).map do |resource|
     hash = {}
     hash[:domain], hash[:ttl], hash[:dnsclass], hash[:type], hash[:data] =
       resource.split(' ')
+    hash[:ttl] = hash[:ttl].to_i
     hash
   end
 end

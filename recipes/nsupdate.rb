@@ -30,7 +30,7 @@ records.each do |record|
   data = node['ipaddress'] if data.nil? && record['action'] != 'delete'
 
   # Create resource
-  resource = bind_ddns "nsupdate #{domain}" do
+  resource = bind_ddns "nsupdate #{domain} #{data}" do
     action :add
   end
 

@@ -31,11 +31,26 @@ end
 
 describe host('linux.client-ddns.chef.kitchen') do
   it { should be_resolvable.by('dns') }
-  its(:ipv4_address) { should eq '10.11.12.13' }
+  cmd = 'dig +noall +answer "linux.client-ddns.chef.kitchen" | sort'
+  expected =
+    "linux.client-ddns.chef.kitchen.\t86400 IN A\t10.11.12.13\n"\
+    "linux.client-ddns.chef.kitchen.\t86400 IN A\t13.12.11.10\n"
+  it 'should have 2 IPs' do
+    expect(command(cmd).stdout).to eq(expected)
+  end
 end
 
 describe host('test-delete.chef.kitchen') do
   it { should_not be_resolvable.by('dns') }
+end
+
+describe host('test-uniq.chef.kitchen') do
+  it { should be_resolvable.by('dns') }
+  cmd = 'dig +noall +answer "test-uniq.chef.kitchen" | sort'
+  expected = "test-uniq.chef.kitchen.\t86400\tIN\tA\t30.31.32.33\n"
+  it 'should have only one entry: 30.31.32.33' do
+    expect(command(cmd).stdout).to eq(expected)
+  end
 end
 
 describe host('testcname.chef.kitchen') do

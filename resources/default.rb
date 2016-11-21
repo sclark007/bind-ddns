@@ -18,7 +18,8 @@ actions :add, :delete
 default_action :add
 
 attributes = [
-  # If the defined domain must have only one entry (remove other if true)
+  # If the defined domain must have only one entry for the given type.
+  # Ex: if type is 'A', remove all other 'A' entries (even with action delete)
   [:uniq, kind_of: [TrueClass, FalseClass], default: true],
 
   # DNS server, authoritative on the zone

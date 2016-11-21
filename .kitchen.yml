@@ -103,13 +103,25 @@ suites:
           records:
             - zone: chef.kitchen
             - domain: 'linux.client-ddns.chef.kitchen'
+              data: "13.12.11.10"
+              zone: chef.kitchen
+              uniq: false
+            - domain: 'linux.client-ddns.chef.kitchen'
               data: "10.11.12.13"
               zone: chef.kitchen
+              uniq: false
             - domain: test-delete.chef.kitchen
               zone: chef.kitchen.
               keyname: chef.kitchen
               secret: 9ZDQZxLEBuho4+O0EuGOYA==
               action: delete
+            - zone: chef.kitchen
+              domain: 'test-uniq.chef.kitchen'
+              data: "20.21.22.23"
+              uniq: false
+            - zone: chef.kitchen
+              domain: 'test-uniq.chef.kitchen.'
+              data: "30.31.32.33"
             - zone: chef.kitchen
               domain: 'testcname.chef.kitchen'
               data: 'linux.client-ddns.chef.kitchen'
