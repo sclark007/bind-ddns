@@ -27,12 +27,18 @@ end
 
 describe host('ns.chef.kitchen') do
   it { should be_resolvable.by('dns') }
-  its(:ipv4_address) { should eq ip_eth0 }
+  expected = "ns.chef.kitchen. 86400 IN A #{ip_eth0}\n"
+  it "should resolve to eth0 ip: #{ip_eth0}" do
+    expect(command(dig('ns.chef.kitchen')).stdout).to eq(expected)
+  end
 end
 
-describe host('server-ddns') do
+describe host('server-ddns.chef.kitchen') do
   it { should be_resolvable.by('dns') }
-  its(:ipv4_address) { should eq ip_eth0 }
+  expected = "server-ddns.chef.kitchen. 86400 IN A #{ip_eth0}\n"
+  it "should resolve to eth0 ip: #{ip_eth0}" do
+    expect(command(dig('server-ddns.chef.kitchen')).stdout).to eq(expected)
+  end
 end
 
 describe file('/etc/resolv.conf') do

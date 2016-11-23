@@ -25,3 +25,7 @@ def ip_eth0
     addr.ipv4? && !addr.ipv4_loopback?
   end.ip_address
 end
+
+def dig(domain)
+  "dig +noall +answer '#{domain}' | sort | sed 's/\\s\\+/ /g'"
+end
