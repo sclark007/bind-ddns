@@ -21,8 +21,7 @@ Declared in [metadata.rb](metadata.rb) and in [Gemfile](Gemfile).
 
 - RHEL Family 7, tested on Centos
 
-Note: it should work fine on Debian 8 but the official docker image does not
-allow systemd to work easily, so it could not be tested.
+Note: it should work fine on Debian 8 it is currently not tested.
 
 Usage
 -----
