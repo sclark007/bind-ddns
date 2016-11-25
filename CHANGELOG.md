@@ -1,6 +1,24 @@
 Changelog
 =========
 
+1.6.0
+-----
+
+Main:
+
+- Refactor default provider to manage correctly non-A entries
+- Fix #1: nsupdate fails during first run on server
+
+Tests:
+
+- Use latest gitlab-ci.yml template (20160914)
+- Fix test cleaning, make verify independant
++ Refactor tests, use dig, be more consistent
+
+Misc:
+
+- Fix rubocop offenses (from new versions)
+
 1.5.0
 -----
 
