@@ -22,7 +22,7 @@ use_inline_resources
 action :add do
   nr = new_resource.to_hash
   nr[:data] = resolve_iface(nr[:data])
-  current = check_current(nr[:domain], nr[:server])
+  current = check_current(nr[:domain], nr[:port], nr[:server])
 
   if nr[:uniq]
     different = current.select do |r|
@@ -43,7 +43,7 @@ end
 action :delete do
   nr = new_resource.to_hash
   nr[:data] = resolve_iface(nr[:data])
-  current = check_current(nr[:domain], nr[:server])
+  current = check_current(nr[:domain], nr[:port], nr[:server])
 
   existing = current.select { |r| r[:type] == nr[:type] }
   return if existing.empty?
@@ -61,11 +61,11 @@ action :delete do
   end
 end
 
-def check_current(domain, server = nil)
+def check_current(domain, port, server = nil)
   server = server.nil? ? '' : "@#{server}"
-  dig = Mixlib::ShellOut.new("dig +noall +answer #{server} #{domain}")
-  dig.run_command
-  dig.stdout.lines.map(&:strip).map do |resource|
+  dig =
+    Mixlib::ShellOut.new("dig +noall +answer #{server} -p #{port} #{domain}")
+  dig.run_command.stdout.lines.map(&:strip).map do |resource|
     hash = {}
     hash[:domain], hash[:ttl], hash[:dnsclass], hash[:type], hash[:data] =
       resource.split(' ')

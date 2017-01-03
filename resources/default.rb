@@ -24,6 +24,8 @@ attributes = [
 
   # DNS server, authoritative on the zone
   [:server, kind_of: String, default: nil],
+  # DNS server port
+  [:port, kind_of: Integer, default: 53],
   # DNS Zone to add the entry
   [:zone, kind_of: String, default: nil],
   # Name of DDNS Key
