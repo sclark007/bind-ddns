@@ -61,7 +61,8 @@ suites:
         search: chef.kitchen
         server-config: # Should be used
           options:
-            listen-on: "port 53 { localnets; }"
+            listen-on: "port 53 { localnets; };\n
+             listen-on port 553 { localnets; }"
             allow-query: "{ localnets; }"
             forwarders: "<%= forwarders %>"
         client-config: # Should not be used
@@ -98,6 +99,7 @@ suites:
       bind-ddns:
         package_retries: 1
         servers: [ server-ddns.chef.kitchen ]
+        port: 553
         keys:
           - name: chef.kitchen
             secret: 9ZDQZxLEBuho4+O0EuGOYA==

@@ -82,7 +82,7 @@ def nsupdate(nr, action, data)
     #{create_update(nr, action, data)}
     send
   EOS
-  execute "cat <<-EOF | nsupdate #{nr[:cli_options]}
+  execute "cat <<-EOF | nsupdate -p #{nr[:port]} #{nr[:cli_options]}
     #{config}EOF
   "
 end

@@ -14,6 +14,11 @@
 # limitations under the License.
 #
 
+# Client/Server configuration
+# A node is declared as server if its FQDN is included in the following
+# attribute. See README for more information.
+default['bind-ddns']['servers'] = []
+
 # Installation options
 default['bind-ddns']['package'] = 'bind'
 default['bind-ddns']['package-utils'] = 'bind-utils'
@@ -32,6 +37,9 @@ default['bind-ddns']['set_resolv_conf'] = false
 default['bind-ddns']['server'] = nil
 default['bind-ddns']['secondary_servers'] = []
 default['bind-ddns']['search'] = nil
+
+# Global default port for nsupdate (and maybe one day for resolv.conf)
+default['bind-ddns']['port'] = 53
 
 # Default Bind options (as provided by centos package
 default['bind-ddns']['options'] = {

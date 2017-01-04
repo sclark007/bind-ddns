@@ -35,8 +35,10 @@ records.each do |record|
   end
 
   # Set global server as default
-  global_server = config['server']
-  resource.server global_server unless global_server.nil?
+  resource.server config['server'] unless config['server'].nil?
+
+  # Set global port as default
+  resource.port config['port']
 
   # Get default zone name from tail part of domain (without the head)
   zone = record['zone']
