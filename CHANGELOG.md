@@ -1,6 +1,16 @@
 Changelog
 =========
 
+1.7.0
+-----
+
+Main:
+- Add port option for nsupdate resource
+
+Tests:
+- Use latest gitlab-ci config (20161220)
+- Set always\_update\_cookbooks to avoid old berk lock
+
 1.6.0
 -----
 
