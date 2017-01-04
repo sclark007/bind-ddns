@@ -31,6 +31,7 @@ transport:
 
 provisioner:
   name: chef_zero
+  always_update_cookbooks: true
   client_rb:
     file_atomic_update: false
 
