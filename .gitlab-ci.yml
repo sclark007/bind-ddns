@@ -1,4 +1,4 @@
-# Template chef 20160914
+# Template chef 20161220
 image: sbernard/arch-kitchen-docker
 
 foodcritic:
@@ -26,7 +26,7 @@ kitchen:
     - docker
   script:
     - >
-      images=$(kitchen diagnose | grep image | cut -d':' -f2);
+      images=$(kitchen diagnose | grep '^      image:' | cut -d':' -f2);
       for image in $images; do
         docker pull $image
       done
