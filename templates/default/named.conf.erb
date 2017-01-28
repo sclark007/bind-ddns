@@ -15,7 +15,7 @@ logging {
   };
   <% end %>
   <% @categories.each do |category| %>
-    category <% category['name'] %> {
+    category <%= category['name'] %> {
     <% category['channels'].each do |channel| %>
     <%= channel %>;
     <% end %>
