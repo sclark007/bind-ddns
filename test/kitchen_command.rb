@@ -48,6 +48,9 @@ module Kitchen
         run_converge(instances, services, helpers)
         run_action_official(:verify, instances)
         run_action_official(:destroy, instances) unless type == :never
+      rescue StandardError => error
+        run_action_official(:destroy, instances) if type == :always
+        raise error
       end
 
       def run_create(_instances, services, helpers, _type = nil)
