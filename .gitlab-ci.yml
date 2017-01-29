@@ -1,4 +1,4 @@
-# Template chef 20161220
+# Template chef 20170117
 image: sbernard/arch-kitchen-docker
 
 foodcritic:
@@ -26,8 +26,9 @@ kitchen:
     - docker
   script:
     - >
+      alias kitchen='bundle exec kitchen'
       images=$(kitchen diagnose | grep '^      image:' | cut -d':' -f2);
       for image in $images; do
         docker pull $image
       done
-    - kitchen test -c -d always
+    - bundle exec kitchen test -c -d always
