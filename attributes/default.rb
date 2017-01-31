@@ -14,35 +14,38 @@
 # limitations under the License.
 #
 
+# Set cookbook_name macro
+cookbook_name = 'bind-ddns'
+
 # Client/Server configuration
 # A node is declared as server if its FQDN is included in the following
 # attribute. See README for more information.
-default['bind-ddns']['servers'] = []
+default[cookbook_name]['servers'] = []
 
 # Installation options
-default['bind-ddns']['package'] = 'bind'
-default['bind-ddns']['package-utils'] = 'bind-utils'
+default[cookbook_name]['package'] = 'bind'
+default[cookbook_name]['package-utils'] = 'bind-utils'
 
-default['bind-ddns']['user'] = 'named'
-default['bind-ddns']['config_dir'] = '/etc'
-default['bind-ddns']['var_dir'] = '/var/named'
-default['bind-ddns']['service_name'] = 'named'
+default[cookbook_name]['user'] = 'named'
+default[cookbook_name]['config_dir'] = '/etc'
+default[cookbook_name]['var_dir'] = '/var/named'
+default[cookbook_name]['service_name'] = 'named'
 
 # Specific configuration depending on status (client or server)
-default['bind-ddns']['client-config'] = {}
-default['bind-ddns']['server-config'] = {}
+default[cookbook_name]['client-config'] = {}
+default[cookbook_name]['server-config'] = {}
 
 # Set resolv.conf
-default['bind-ddns']['set_resolv_conf'] = false
-default['bind-ddns']['server'] = nil
-default['bind-ddns']['secondary_servers'] = []
-default['bind-ddns']['search'] = nil
+default[cookbook_name]['set_resolv_conf'] = false
+default[cookbook_name]['server'] = nil
+default[cookbook_name]['secondary_servers'] = []
+default[cookbook_name]['search'] = nil
 
 # Global default port for nsupdate (and maybe one day for resolv.conf)
-default['bind-ddns']['port'] = 53
+default[cookbook_name]['port'] = 53
 
 # Default Bind options (as provided by centos package
-default['bind-ddns']['options'] = {
+default[cookbook_name]['options'] = {
   'listen-on' => 'port 53 { 127.0.0.1; }',
   'listen-on-v6' => 'port 53 { ::1; }',
   'directory' => '"/var/named"',
@@ -60,18 +63,18 @@ default['bind-ddns']['options'] = {
   'session-keyfile' => '"/run/named/session.key"'
 }
 
-default['bind-ddns']['keys'] = []
+default[cookbook_name]['keys'] = []
 # Example of a key definition, algorithm is optional
 # {
 #   'name' => 'keyname',
 #   'algorithm' => 'HMAC-MD5'
 #   'secret' => 'XXXX'
 # }
-default['bind-ddns']['default_key_algorithm'] = 'HMAC-MD5'
+default[cookbook_name]['default_key_algorithm'] = 'HMAC-MD5'
 
 # records declared to the server through nsupdate
 # interface names will be resolved to their first non-local IP address
-default['bind-ddns']['records'] = []
+default[cookbook_name]['records'] = []
 # Example of record
 # {
 #   'domain' => 'server.myzone',
@@ -80,7 +83,7 @@ default['bind-ddns']['records'] = []
 # }
 
 # Logging configuration
-default['bind-ddns']['channels'] = [
+default[cookbook_name]['channels'] = [
   {
     'name' => 'default_debug',
     'config' => {
@@ -90,10 +93,10 @@ default['bind-ddns']['channels'] = [
   }
 ]
 
-default['bind-ddns']['categories'] = []
+default[cookbook_name]['categories'] = []
 
 # Zones configuration
-default['bind-ddns']['zones_default'] = {
+default[cookbook_name]['zones_default'] = {
   'global_ttl' => '1d',
   'refresh' => '3h',
   'retry' => '30m',
@@ -102,7 +105,7 @@ default['bind-ddns']['zones_default'] = {
   'extra_records' => []
 }
 
-default['bind-ddns']['zones'] = [
+default[cookbook_name]['zones'] = [
   {
     'name' => '"." IN',
     'config' => {
@@ -131,13 +134,13 @@ default['bind-ddns']['zones'] = [
 ]
 
 # Included file (from named.conf)
-default['bind-ddns']['default_files'] = [
+default[cookbook_name]['default_files'] = [
   'named.rfc1912.zones',
   'named.root.key'
 ]
 
-default['bind-ddns']['included_files'] = []
+default[cookbook_name]['included_files'] = []
 
 # Configure retries for the package resources, default = global default (0)
 # (mostly used for test purpose)
-default['bind-ddns']['package_retries'] = nil
+default[cookbook_name]['package_retries'] = nil
