@@ -1,13 +1,28 @@
 Changelog
 =========
 
+1.8.0
+-----
+
+Main:
+
+- Fix output of category (logging) in named.conf
+- Use cookbook\_name "macro" everywhere
+
+Tests:
+
+- Use latest gitlab-ci config (20170117)
+- Fix cleaning of test instances on CI
+
 1.7.0
 -----
 
 Main:
+
 - Add port option for nsupdate resource
 
 Tests:
+
 - Use latest gitlab-ci config (20161220)
 - Set always\_update\_cookbooks to avoid old berk lock
 
